@@ -1,0 +1,3 @@
+# circleMUD Obejctives 
+
+- Since this is just the beginning of our circleMUD adventure, I want to start off gently. My goal is for the warrior Dummy to no longer be thirsty or hungry, and to level up to level 7. I want to achieve this using agentic AI, without actually playing the game myself. To that end, I’ll first watch the videos on Agent Architecture I and Agent Architecture II, and only then let the character play.
