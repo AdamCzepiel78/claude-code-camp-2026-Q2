@@ -47,6 +47,7 @@ class ObjectExtraEffect(IntFlag):
     ANTI_THIEF = 16384  # Item can't be used by the Thief class.
     ANTI_WARRIOR = 32768  # Item can't be used by the Warrior class.
     NOSELL = 65536  # Shopkeepers will not buy or sell the item.
+    QUEST = 131072  # Item is a quest item (tbaMUD).
 
 
 class ObjectWear(IntFlag):
@@ -115,6 +116,7 @@ class RoomFlag(IntFlag):
     ATRIUM = 8192  # Reserved for internal use. Do not set.
     OLC = 16384  # Reserved for internal use. Do not set.
     BFS_MARK = 32768  # Reserved for internal use. Do not set.
+    WORLDMAP = 65536  # World-map style maps here (tbaMUD).
 
 
 class RoomSectorType(IntEnum):
@@ -182,7 +184,7 @@ class MobAction(IntFlag):
     NOSLEEP = 32768  # Sleep spell cannot be cast on mob.
     NOBASH = 65536  # Large mobs such as trees that cannot be bashed.
     NOBLIND = 131072  # Mob cannot be blinded.
-    NOTDEADYET = 262144  # Reserved for internal use. Do not set.
+    NOKILL = 262144  # Mob cannot be attacked (tbaMUD; stock Circle used this bit internally as NOTDEADYET).
 
 
 class MobAffect(IntFlag):
@@ -209,6 +211,130 @@ class MobAffect(IntFlag):
     HIDE = 524288  # Mob is hidden (only visible with sense life).
     UNUSED20 = 1048576  # Unused (room for future expansion).
     CHARM = 2097152  # Reserved for internal use. Do not set.
+
+
+class TbaMobAffect(IntFlag):
+    """Mob affect flags in tbaMUD's 128-bit numbering.
+
+    tbaMUD's conversion to bit arrays inserted DONTUSE at bit 0,
+    shifting every classic AFF_* flag up by one bit relative to
+    stock CircleMUD (see MobAffect).
+    """
+    DONTUSE = 1  # Placeholder so 0 means "no bits set". Do not set.
+    BLIND = 2  # Mob is blind.
+    INVISIBLE = 4  # Mob is invisible.
+    DETECT_ALIGN = 8  # Mob is sensitive to the alignment of others.
+    DETECT_INVIS = 16  # Mob can see invisible characters and objects.
+    DETECT_MAGIC = 32  # Mob is sensitive to magical presence.
+    SENSE_LIFE = 64  # Mob can sense hidden life.
+    WATERWALK = 128  # Mob can traverse unswimmable water sectors.
+    SANCTUARY = 256  # Mob is protected by sanctuary (half damage).
+    GROUP = 512  # Reserved for internal use. Do not set.
+    CURSE = 1024  # Mob is cursed.
+    INFRAVISION = 2048  # Mob can see in dark.
+    POISON = 4096  # Reserved for internal use. Do not set.
+    PROTECT_EVIL = 8192  # Mob is protected from evil characters.
+    PROTECT_GOOD = 16384  # Mob is protected from good characters.
+    SLEEP = 32768  # Reserved for internal use. Do not set.
+    NOTRACK = 65536  # Mob cannot be tracked.
+    FLYING = 131072  # Mob is flying.
+    SCUBA = 262144  # Mob can breathe underwater.
+    SNEAK = 524288  # Mob can move quietly (room not informed).
+    HIDE = 1048576  # Mob is hidden (only visible with sense life).
+    FREE = 2097152  # Unused (room for future expansion).
+    CHARM = 4194304  # Reserved for internal use. Do not set.
+
+
+class ZoneFlag(IntFlag):
+    """Zone flags (tbaMUD bitvector)."""
+    CLOSED = 1  # Zone is closed - players cannot enter.
+    NOIMMORT = 2  # Immortals below LVL_GRGOD cannot enter.
+    QUEST = 4  # This zone is a quest zone (not implemented).
+    GRID = 8  # Zone is 'on the grid', shown in 'areas'.
+    NOBUILD = 16  # Building is not allowed in the zone.
+    NOASTRAL = 32  # No teleportation magic to or from this zone.
+    WORLDMAP = 64  # Whole zone uses the WORLDMAP by default.
+
+
+class TriggerAttachType(IntEnum):
+    """What a DG script trigger attaches to."""
+    MOB = 0
+    OBJ = 1
+    WLD = 2
+
+
+class MobTriggerType(IntFlag):
+    """DG script trigger types for mob triggers (bitvector)."""
+    GLOBAL = 1  # Check even if zone empty.
+    RANDOM = 2  # Checked randomly.
+    COMMAND = 4  # Character types a command.
+    SPEECH = 8  # A char says a word/phrase.
+    ACT = 16  # An action is done to the mob.
+    DEATH = 32  # Character dies.
+    GREET = 64  # Something enters room seen.
+    GREET_ALL = 128  # Anything enters room.
+    ENTRY = 256  # The mob enters a room.
+    RECEIVE = 512  # Character is given object.
+    FIGHT = 1024  # Each pulse while fighting.
+    HITPRCNT = 2048  # Fighting and below some HP percent.
+    BRIBE = 4096  # Coins are given to mob.
+    LOAD = 8192  # The mob is loaded.
+    MEMORY = 16384  # Mob sees a remembered character.
+    CAST = 32768  # Mob targeted by spell.
+    LEAVE = 65536  # Someone leaves room seen.
+    DOOR = 131072  # A door in the room is manipulated.
+    TIME = 524288  # Trigger fires at a certain game hour.
+    DAMAGE = 1048576  # The mob is damaged (tbaMUD).
+
+
+class ObjTriggerType(IntFlag):
+    """DG script trigger types for object triggers (bitvector)."""
+    GLOBAL = 1  # Unused.
+    RANDOM = 2  # Checked randomly.
+    COMMAND = 4  # Character types a command.
+    TIMER = 32  # Object's timer expires.
+    GET = 64  # Object is picked up.
+    DROP = 128  # Character tries to drop object.
+    GIVE = 256  # Character tries to give object.
+    WEAR = 512  # Object is worn.
+    REMOVE = 2048  # Object is removed.
+    LOAD = 8192  # The object is loaded.
+    CAST = 32768  # Object targeted by spell.
+    LEAVE = 65536  # Someone leaves room seen.
+    CONSUME = 262144  # Char tries to eat/drink object.
+    TIME = 524288  # Trigger fires at a certain game hour.
+
+
+class WldTriggerType(IntFlag):
+    """DG script trigger types for room triggers (bitvector)."""
+    GLOBAL = 1  # Check even if zone empty.
+    RANDOM = 2  # Checked randomly.
+    COMMAND = 4  # Character types a command.
+    SPEECH = 8  # A char says a word/phrase.
+    RESET = 32  # Zone has been reset.
+    ENTER = 64  # Character enters the room.
+    DROP = 128  # Something is dropped in the room.
+    CAST = 32768  # A spell is cast in the room.
+    LEAVE = 65536  # Character leaves the room.
+    DOOR = 131072  # A door in the room is manipulated.
+    LOGIN = 262144  # A player logs in to the room (tbaMUD).
+    TIME = 524288  # Trigger fires at a certain game hour.
+
+
+class QuestType(IntEnum):
+    """tbaMUD autoquest types."""
+    OBJ_FIND = 0  # Player must retrieve object.
+    ROOM_FIND = 1  # Player must reach room.
+    MOB_FIND = 2  # Player must find mob.
+    MOB_KILL = 3  # Player must kill mob.
+    MOB_SAVE = 4  # Player must save mob.
+    OBJ_RETURN = 5  # Player gives object to mob.
+    ROOM_CLEAR = 6  # Player must clear room of all mobs.
+
+
+class QuestFlag(IntFlag):
+    """tbaMUD autoquest flags (bitvector)."""
+    REPEATABLE = 1  # Quest can be repeated.
 
 
 class MobPosition(IntEnum):
@@ -268,102 +394,3 @@ class ShopTradesWith(IntFlag):
     NOCLERIC = 16  # Don't trade with the Cleric class.
     NOTHIEF = 32  # Don't trade with the Thief class.
     NOWARRIOR = 64  # Don't trade with the Warrior class.
-
-
-# ---- Triggers (DG Scripts) ----
-# Lifted from tbaMUD's src/dg_scripts.h. A trigger's attach_type selects which of
-# the three trigger-type tables (MTRIG/OTRIG/WTRIG) decodes its letter bitvector.
-
-
-class TriggerAttachType(IntEnum):
-    """Which kind of entity a trigger attaches to (the leading number on the
-    trigger's type line)."""
-    MOB = 0  # Attaches to a mobile.
-    OBJ = 1  # Attaches to an object.
-    WLD = 2  # Attaches to a room (world).
-
-
-class MobTrigger(IntFlag):
-    """Mob trigger types (MTRIG_*, letter bitvector on mob-attached triggers)."""
-    GLOBAL = 1 << 0  # Check even if zone empty.
-    RANDOM = 1 << 1  # Checked randomly.
-    COMMAND = 1 << 2  # Character types a command.
-    SPEECH = 1 << 3  # A char says a word/phrase.
-    ACT = 1 << 4  # Word or phrase sent to act.
-    DEATH = 1 << 5  # Character dies.
-    GREET = 1 << 6  # Something enters room, seen.
-    GREET_ALL = 1 << 7  # Anything enters room.
-    ENTRY = 1 << 8  # The mob enters a room.
-    RECEIVE = 1 << 9  # Character is given an object.
-    FIGHT = 1 << 10  # Each pulse while fighting.
-    HITPRCNT = 1 << 11  # Fighting and below some hp percent.
-    BRIBE = 1 << 12  # Coins are given to mob.
-    LOAD = 1 << 13  # The mob is loaded.
-    MEMORY = 1 << 14  # Mob sees someone it remembers.
-    CAST = 1 << 15  # Mob targetted by spell.
-    LEAVE = 1 << 16  # Someone leaves room, seen.
-    DOOR = 1 << 17  # Door manipulated in room.
-    TIME = 1 << 19  # Trigger based on game hour.
-    DAMAGE = 1 << 20  # Trigger whenever mob is damaged.
-
-
-class ObjTrigger(IntFlag):
-    """Object trigger types (OTRIG_*, letter bitvector on object-attached triggers)."""
-    GLOBAL = 1 << 0  # Unused.
-    RANDOM = 1 << 1  # Checked randomly.
-    COMMAND = 1 << 2  # Character types a command.
-    TIMER = 1 << 5  # Item's timer expires.
-    GET = 1 << 6  # Item is picked up.
-    DROP = 1 << 7  # Character tries to drop obj.
-    GIVE = 1 << 8  # Character tries to give obj.
-    WEAR = 1 << 9  # Character tries to wear obj.
-    REMOVE = 1 << 11  # Character tries to remove obj.
-    LOAD = 1 << 13  # The object is loaded.
-    CAST = 1 << 15  # Object targetted by spell.
-    LEAVE = 1 << 16  # Someone leaves room, seen.
-    CONSUME = 1 << 18  # Char tries to eat/drink obj.
-    TIME = 1 << 19  # Trigger based on game hour.
-
-
-class WldTrigger(IntFlag):
-    """Room trigger types (WTRIG_*, letter bitvector on room-attached triggers)."""
-    GLOBAL = 1 << 0  # Check even if zone empty.
-    RANDOM = 1 << 1  # Checked randomly.
-    COMMAND = 1 << 2  # Character types a command.
-    SPEECH = 1 << 3  # A char says a word/phrase.
-    RESET = 1 << 5  # Zone has been reset.
-    ENTER = 1 << 6  # Character enters room.
-    DROP = 1 << 7  # Something dropped in room.
-    CAST = 1 << 15  # Spell cast in room.
-    LEAVE = 1 << 16  # Character leaves the room.
-    DOOR = 1 << 17  # Door manipulated in room.
-    LOGIN = 1 << 18  # Character logs into MUD.
-    TIME = 1 << 19  # Trigger based on game hour.
-
-
-# Attach type -> the trigger-type table that decodes its bitvector.
-TRIGGER_TYPE_TABLE = {
-    TriggerAttachType.MOB: MobTrigger,
-    TriggerAttachType.OBJ: ObjTrigger,
-    TriggerAttachType.WLD: WldTrigger,
-}
-
-
-# ---- Quests ----
-# Lifted from tbaMUD's src/quest.c (quest_types[] and aq_flags[]).
-
-
-class QuestType(IntEnum):
-    """Quest objective type (AQ_*); drives what `target` refers to."""
-    OBJ_FIND = 0  # "Object" — find/get an object.
-    ROOM_FIND = 1  # "Room" — reach a room.
-    MOB_FIND = 2  # "Find mob" — locate a mob.
-    MOB_KILL = 3  # "Kill mob" — kill a mob.
-    MOB_SAVE = 4  # "Save mob" — rescue a mob.
-    OBJ_RETURN = 5  # "Return object" — return an object to the questmaster.
-    ROOM_CLEAR = 6  # "Clear room" — clear a room of mobs.
-
-
-class QuestFlag(IntFlag):
-    """Quest flags (aq_flags, bitvector)."""
-    REPEATABLE = 1  # Quest can be completed more than once.

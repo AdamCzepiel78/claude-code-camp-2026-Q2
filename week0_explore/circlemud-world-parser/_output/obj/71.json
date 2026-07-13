@@ -1,0 +1,58 @@
+[
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 17,
+        "note": "AC",
+        "value": -10
+      },
+      {
+        "location": 18,
+        "note": "HITROLL",
+        "value": 2
+      }
+    ],
+    "aliases": [
+      "ring",
+      "silver"
+    ],
+    "cost": 16000,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [],
+    "id": 7190,
+    "level": null,
+    "long_desc": "A lovely silver ring has been left here.",
+    "perm_affects": [],
+    "rent": 5000,
+    "short_desc": "a glinting silver ring",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WORN",
+      "value": 11
+    },
+    "values": [
+      0,
+      0,
+      10,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_FINGER",
+        "value": 2
+      }
+    ],
+    "weight": 9
+  }
+]

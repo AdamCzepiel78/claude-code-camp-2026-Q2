@@ -3,9 +3,10 @@ from typing import Literal, cast
 
 from pydantic import BaseModel, Field
 
-from .constants import MobAction, MobAffect, MobGender, MobPosition
+from .constants import (MobAction, MobAffect, MobGender, MobPosition,
+                        TbaMobAffect)
 from .models import Flag
-from .utils import lookup_value_to_dict, parse_flags
+from .utils import lookup_value_to_dict, parse_flags_wide
 
 MobType = Literal["S", "E"]
 
@@ -46,7 +47,6 @@ class Mobile(BaseModel):
     alignment: int = Field(..., description="Alignment (-1000 to 1000)")
     flags: list[Flag] = Field(default_factory=list, description="Action flags")
     affects: list[Flag] = Field(default_factory=list, description="Affect flags")
-    triggers: list[int] = Field(default_factory=list, description="Attached DG trigger VNUMs")
     level: int = Field(..., description="Mobile level")
     thac0: int = Field(..., description="To-hit armor class 0")
     armor_class: int = Field(..., description="Armor class")
@@ -57,6 +57,7 @@ class Mobile(BaseModel):
     position: Position = Field(..., description="Position states")
     gender: Flag = Field(..., description="Gender (N/M/F)")
     extra_spec: dict[str, int] = Field(default_factory=dict, description="Extended specs for E-type mobs")
+    triggers: list[int] = Field(default_factory=list, description="Attached DG script trigger VNUMs (tbaMUD)")
 
     @classmethod
     def from_text(cls, text: str) -> "Mobile":
@@ -73,14 +74,17 @@ class Mobile(BaseModel):
         start_bottom_matter = tildes[3] + 1
         bottom_fields = text[start_bottom_matter:].strip('\n').split('\n')
 
-        vector_fields = bottom_fields[0].split()
-        action = vector_fields[0]
-        affect = vector_fields[1] if len(vector_fields) > 1 else "0"
-        alignment = vector_fields[-2]
-        mob_type = vector_fields[-1]
+        # Stock CircleMUD: "<action> <affect> <align> <S|E>". tbaMUD 128-bit:
+        # "<action x4> <affect x4> <align> <S|E>". tbaMUD also renumbered the
+        # affect bits (DONTUSE inserted at bit 0), hence the separate enum.
+        vector_tokens = bottom_fields[0].split()
+        alignment, mob_type = vector_tokens[-2], vector_tokens[-1]
+        flag_fields = vector_tokens[:-2]
+        half = len(flag_fields) // 2
+        affect_enum = MobAffect if half == 1 else TbaMobAffect
 
-        flags = parse_flags(action, MobAction)
-        affects = parse_flags(affect, MobAffect)
+        flags = parse_flags_wide(flag_fields[:half], MobAction)
+        affects = parse_flags_wide(flag_fields[half:], affect_enum)
 
         level, thac0, ac, max_hp, bare_hand_dmg = bottom_fields[1].split()
         gold, xp = bottom_fields[2].split()
@@ -92,23 +96,20 @@ class Mobile(BaseModel):
 
         gender_dict = lookup_value_to_dict(int(gender), MobGender)
 
+        # After the numeric lines: optional "Key: value" especs for E-type
+        # mobs (terminated by a lone 'E') and optional "T <vnum>" trigger
+        # attach lines (tbaMUD).
         extra_spec = {}
         triggers = []
-        if len(bottom_fields) > 4:
-            assert mob_type == 'E'
-
-            for line in bottom_fields[4:]:
-                if line == 'E':
-                    break
-                if line.startswith("T "):
-                    triggers.append(int(line.split()[1]))
-                    continue
-                key, value = line.split(': ')
-                extra_spec[key] = int(value)
-
-        for line in bottom_fields:
-            if line.startswith("T "):
+        for line in bottom_fields[4:]:
+            line = line.strip()
+            if not line or line == 'E':
+                continue
+            if line.startswith('T '):
                 triggers.append(int(line.split()[1]))
+            else:
+                key, value = line.split(':', 1)
+                extra_spec[key.strip()] = int(value.strip())
 
         return cls(
             id=mob_id,
@@ -130,5 +131,5 @@ class Mobile(BaseModel):
             position=position,
             gender=Flag(**gender_dict),
             extra_spec=extra_spec,
-            triggers=sorted(set(triggers)),
+            triggers=triggers,
         )

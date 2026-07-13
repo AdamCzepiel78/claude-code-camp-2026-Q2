@@ -1,21 +1,18 @@
 """
-Quests — tbaMUD's `world/qst/*.qst` files.
+Parser for tbaMUD autoquest (.qst) files.
 
-A quest record (field order lifted from parse_quest in tbaMUD's src/quest.c):
+Format (see parse_quest in tbaMUD's quest.c):
 
-    #100
-    Kill the Mice!~                     <- name
-    mice~                               <- desc (keyword list; shown as "offer")
-    I really need some help ...~        <- info
-    Well done! ...~                     <- done (completion)
-    You have abandoned the quest.~      <- quit (abandon)
-    3 179 0 194 -1 -1 -1                <- type qm flags target prev_quest next_quest prereq
-    0 0 1 34 60 -1 3                    <- value[0..6]
-    10 0 65535                          <- gold_reward exp_reward obj_reward
-    S                                   <- record terminator
-
-Five ~-terminated strings, then three numeric lines. 65535 (NOTHING/NOBODY) is
-normalised to -1 so "none" is uniform with the rest of the world data.
+    #<vnum>
+    <name>~
+    <description>~
+    <info shown on quest join>~
+    <completion message>~
+    <abandon message>~
+    <type> <questmaster> <flags> <target> <prev quest> <next quest> <prereq object>
+    <points> <penalty> <min level> <max level> <time limit> <return mob> <quantity>
+    <gold reward> <exp reward> <object reward>
+    S
 """
 from pydantic import BaseModel, Field
 
@@ -23,97 +20,82 @@ from .constants import QuestFlag, QuestType
 from .models import Flag
 from .utils import lookup_value_to_dict, parse_flags
 
-# tbaMUD sentinel for "no object / no mob / nowhere".
-NONE_SENTINEL = 65535
-
-
-def _none(value: int) -> int:
-    """Map tbaMUD's 65535 sentinel to the -1 "none" convention."""
-    return -1 if value == NONE_SENTINEL else value
-
-
-class QuestMessages(BaseModel):
-    """The four ~-terminated message strings shown at each quest stage."""
-
-    offer: str = Field("", description="Offer / keyword description")
-    info: str = Field("", description="Info text shown when the quest is taken")
-    done: str = Field("", description="Completion text")
-    quit: str = Field("", description="Abandon text")
-
-
-class QuestRewards(BaseModel):
-    """Rewards granted on completion."""
-
-    gold: int = Field(0, description="Gold reward")
-    exp: int = Field(0, description="Experience reward")
-    obj: int = Field(-1, description="Object VNUM reward (-1 = none)")
-
 
 class Quest(BaseModel):
-    """A tbaMUD quest definition."""
+    """A tbaMUD autoquest definition."""
 
-    id: int = Field(..., description="Quest VNUM")
-    name: str = Field(..., description="Quest title")
-    messages: QuestMessages = Field(..., description="Stage message strings")
-    questmaster: int = Field(-1, description="Mob VNUM that assigns the quest (-1 = none)")
-    type: Flag = Field(..., description="Objective type (AQ_*)")
+    id: int = Field(..., description="Virtual number (VNUM)")
+    name: str = Field(..., description="Quest name")
+    desc: str = Field(..., description="Short description shown in quest lists")
+    info: str = Field(..., description="Details shown when the quest is joined")
+    completion_message: str = Field(..., description="Message shown on completion")
+    abandon_message: str = Field(..., description="Message shown when abandoned")
+    type: Flag = Field(..., description="Quest type (kill mob, find object, etc.)")
+    questmaster: int = Field(..., description="Questmaster mobile VNUM")
     flags: list[Flag] = Field(default_factory=list, description="Quest flags")
-    target: int = Field(-1, description="Objective target VNUM, interpreted per type")
-    prev_quest: int = Field(-1, description="Previous quest in chain (-1 = none)")
-    next_quest: int = Field(-1, description="Next quest in chain (-1 = none)")
-    prereq: int = Field(-1, description="Prerequisite object the player must hold (-1 = none)")
-    value: list[int] = Field(default_factory=list, description="Raw value[0..6] slots")
-    rewards: QuestRewards = Field(..., description="Completion rewards")
+    target: int = Field(..., description="Target VNUM (meaning depends on type), -1 if none")
+    prev_quest: int = Field(..., description="Prerequisite quest VNUM, -1 if none")
+    next_quest: int = Field(..., description="Follow-up quest VNUM, -1 if none")
+    prereq_object: int = Field(..., description="Prerequisite object VNUM, -1 if none")
+    points: int = Field(..., description="Quest points awarded on completion")
+    penalty: int = Field(..., description="Quest point penalty for abandoning/failing")
+    min_level: int = Field(..., description="Minimum player level")
+    max_level: int = Field(..., description="Maximum player level")
+    time_limit: int = Field(..., description="Time limit in ticks, -1 if none")
+    return_mob: int = Field(..., description="Mob VNUM to return the object to")
+    quantity: int = Field(..., description="Number of targets required")
+    gold_reward: int = Field(..., description="Gold awarded on completion")
+    exp_reward: int = Field(..., description="Experience awarded on completion")
+    obj_reward: int = Field(..., description="Object VNUM awarded, -1 if none")
 
     @classmethod
     def from_text(cls, text: str) -> "Quest":
-        """Parse a single quest record from raw text."""
-        lines = text.split('\n')
-        quest_id = int(lines[0].lstrip('#'))
+        """Parse a tbaMUD autoquest definition from raw text."""
+        parts = text.split('~')
+        quest_id = int(parts[0].split('\n')[0])
+        name = '\n'.join(parts[0].split('\n')[1:]).strip('\n')
+        desc = parts[1].strip('\n')
+        info = parts[2].strip('\n')
+        completion_message = parts[3].strip('\n')
+        abandon_message = parts[4].strip('\n')
 
-        # Five ~-terminated strings, then the numeric block. Splitting on '~'
-        # positionally tolerates the file-level rstrip on the last record.
-        rest = '\n'.join(lines[1:])
-        parts = rest.split('~')
+        numeric_lines = [
+            line for line in parts[5].strip('\n').split('\n')
+            if line.strip() and line.strip() != 'S'
+        ]
+        header = numeric_lines[0].split()
+        quest_type = Flag(**lookup_value_to_dict(int(header[0]), QuestType))
+        questmaster = int(header[1])
+        flags = parse_flags(header[2], QuestFlag)
+        target, prev_quest, next_quest, prereq_object = (int(v) for v in header[3:7])
 
-        name = parts[0].strip()
-        messages = QuestMessages(
-            offer=parts[1].strip('\n') if len(parts) > 1 else '',
-            info=parts[2].strip('\n') if len(parts) > 2 else '',
-            done=parts[3].strip('\n') if len(parts) > 3 else '',
-            quit=parts[4].strip('\n') if len(parts) > 4 else '',
-        )
+        values = [int(v) for v in numeric_lines[1].split()]
+        points, penalty, min_level, max_level, time_limit, return_mob, quantity = values
 
-        num_lines = [line for line in parts[5].split('\n') if line.strip()] if len(parts) > 5 else []
-        line1 = [int(t) for t in num_lines[0].split()]
-        line2 = [int(t) for t in num_lines[1].split()] if len(num_lines) > 1 else []
-        line3 = [int(t) for t in num_lines[2].split()] if len(num_lines) > 2 else []
-
-        quest_type = Flag(**lookup_value_to_dict(line1[0], QuestType))
-        questmaster = _none(line1[1])
-        flags = parse_flags(str(line1[2]), QuestFlag)
-        target = _none(line1[3])
-        prev_quest = line1[4]
-        next_quest = line1[5]
-        prereq = _none(line1[6])
-
-        rewards = QuestRewards(
-            gold=line3[0] if len(line3) > 0 else 0,
-            exp=line3[1] if len(line3) > 1 else 0,
-            obj=_none(line3[2]) if len(line3) > 2 else -1,
-        )
+        gold_reward, exp_reward, obj_reward = (int(v) for v in numeric_lines[2].split())
 
         return cls(
             id=quest_id,
             name=name,
-            messages=messages,
-            questmaster=questmaster,
+            desc=desc,
+            info=info,
+            completion_message=completion_message,
+            abandon_message=abandon_message,
             type=quest_type,
+            questmaster=questmaster,
             flags=flags,
             target=target,
             prev_quest=prev_quest,
             next_quest=next_quest,
-            prereq=prereq,
-            value=line2,
-            rewards=rewards,
+            prereq_object=prereq_object,
+            points=points,
+            penalty=penalty,
+            min_level=min_level,
+            max_level=max_level,
+            time_limit=time_limit,
+            return_mob=return_mob,
+            quantity=quantity,
+            gold_reward=gold_reward,
+            exp_reward=exp_reward,
+            obj_reward=obj_reward,
         )

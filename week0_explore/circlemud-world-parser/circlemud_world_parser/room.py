@@ -4,8 +4,7 @@ from pydantic import BaseModel, Field
 
 from .constants import RoomDoorFlag, RoomFlag, RoomSectorType
 from .models import ExtraDescription, Flag
-from .utils import (_lookup_enum, clean_bitvector, lookup_value_to_dict,
-                    parse_flags)
+from .utils import (_lookup_enum, lookup_value_to_dict, parse_flags_wide)
 
 EXIT_RE = r"""D(\d+)
 (.*?)~
@@ -19,6 +18,8 @@ EXTRA_DESC_RE = r"""E
 (.*?)
 ~"""
 EXTRA_DESC_PATTERN = re.compile(EXTRA_DESC_RE, re.DOTALL)
+
+TRIGGER_PATTERN = re.compile(r'^T +(\d+)\s*$', re.MULTILINE)
 
 
 class Exit(BaseModel):
@@ -64,7 +65,7 @@ class Room(BaseModel):
     sector_type: Flag = Field(..., description="Terrain type")
     exits: list[Exit] = Field(default_factory=list, description="Exits to other rooms")
     extra_descs: list[ExtraDescription] = Field(default_factory=list, description="Extra descriptions")
-    triggers: list[int] = Field(default_factory=list, description="Attached DG trigger VNUMs")
+    triggers: list[int] = Field(default_factory=list, description="Attached DG script trigger VNUMs (tbaMUD)")
 
     @staticmethod
     def parse_extra_descriptions_from_text(text: str) -> list[ExtraDescription]:
@@ -77,33 +78,36 @@ class Room(BaseModel):
     @classmethod
     def from_text(cls, text: str) -> "Room":
         """Parse a CircleMUD room definition from raw text."""
-        parts = text.split('~')
-        vnum, name = parts[0].split('\n')
-        desc = parts[1].strip()
-        vector_fields = parts[2].strip().split('\n')[0].strip().split()
-        zone = vector_fields[0]
-        flags_raw = vector_fields[1] if len(vector_fields) > 1 else "0"
-        sector = vector_fields[-1]
+        lines = text.split('\n')
+        vnum = lines[0]
+        # Like the game's fread_string: the first '~' terminates the name
+        # and the rest of the line is discarded (some room names contain
+        # literal tildes, e.g. "Welcors ~~~ ~~~ furnace~").
+        name = lines[1].split('~')[0]
 
-        flags_clean = clean_bitvector(flags_raw)
-        flags = parse_flags(flags_raw, RoomFlag) if flags_clean else []
+        body = '\n'.join(lines[2:])
+        desc, _, rest = body.partition('~')
+        rest_lines = rest.split('\n')[1:]  # drop remainder of the '~' line
+
+        # Stock CircleMUD: "<zone> <flags> <sector>". tbaMUD 128-bit:
+        # "<zone> <flags1> <flags2> <flags3> <flags4> <sector>".
+        header = rest_lines[0].strip().split()
+        zone, flag_fields, sector = header[0], header[1:-1], header[-1]
+
+        flags = parse_flags_wide(flag_fields, RoomFlag)
 
         sector_dict = lookup_value_to_dict(int(sector), RoomSectorType)
         sector_type = Flag(**sector_dict)
 
-        bottom_matter = '~'.join(parts[2:])
+        bottom_matter = '\n'.join(rest_lines[1:])
         exits = Exit.from_text(bottom_matter)
         extra_descs = cls.parse_extra_descriptions_from_text(bottom_matter)
-        triggers = [
-            int(line.split()[1])
-            for line in bottom_matter.splitlines()
-            if line.startswith("T ") and len(line.split()) > 1
-        ]
+        triggers = [int(t) for t in TRIGGER_PATTERN.findall(bottom_matter)]
 
         return cls(
             id=int(vnum),
             name=name.strip(),
-            desc=desc.strip('\n'),
+            desc=desc.strip(),
             zone_number=int(zone),
             flags=flags,
             sector_type=sector_type,

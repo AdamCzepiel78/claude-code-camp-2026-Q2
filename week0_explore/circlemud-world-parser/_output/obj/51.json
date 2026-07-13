@@ -1,0 +1,955 @@
+[
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 18,
+        "note": "HITROLL",
+        "value": 1
+      },
+      {
+        "location": 19,
+        "note": "DAMROLL",
+        "value": 1
+      }
+    ],
+    "aliases": [
+      "longsword",
+      "commoner"
+    ],
+    "cost": 1000,
+    "effects": [
+      {
+        "note": "ANTI_MAGIC_USER",
+        "value": 4096
+      }
+    ],
+    "extra_descs": [],
+    "id": 5100,
+    "level": null,
+    "long_desc": "A commoner's longsword made of adamantite has been left here.",
+    "perm_affects": [],
+    "rent": 500,
+    "short_desc": "a commoner's longsword",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      1,
+      8,
+      3
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 12
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 18,
+        "note": "HITROLL",
+        "value": 2
+      },
+      {
+        "location": 19,
+        "note": "DAMROLL",
+        "value": 2
+      }
+    ],
+    "aliases": [
+      "longsword",
+      "noble"
+    ],
+    "cost": 1500,
+    "effects": [
+      {
+        "note": "ANTI_MAGIC_USER",
+        "value": 4096
+      }
+    ],
+    "extra_descs": [],
+    "id": 5101,
+    "level": null,
+    "long_desc": "A drow noble's longsword, made of adamantite, lies here.",
+    "perm_affects": [],
+    "rent": 800,
+    "short_desc": "a noble's longsword",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      1,
+      8,
+      3
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 12
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 18,
+        "note": "HITROLL",
+        "value": 2
+      },
+      {
+        "location": 19,
+        "note": "DAMROLL",
+        "value": 2
+      }
+    ],
+    "aliases": [
+      "whip",
+      "snake",
+      "twoheaded"
+    ],
+    "cost": 1750,
+    "effects": [
+      {
+        "note": "GLOW",
+        "value": 1
+      },
+      {
+        "note": "HUM",
+        "value": 2
+      }
+    ],
+    "extra_descs": [],
+    "id": 5102,
+    "level": null,
+    "long_desc": "A whip with two snakes heads lies here.",
+    "perm_affects": [],
+    "rent": 1500,
+    "short_desc": "a two-headed snake whip",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      2,
+      6,
+      3
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 12
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 18,
+        "note": "HITROLL",
+        "value": 2
+      },
+      {
+        "location": 19,
+        "note": "DAMROLL",
+        "value": 2
+      }
+    ],
+    "aliases": [
+      "whip",
+      "snake",
+      "threeheaded"
+    ],
+    "cost": 5000,
+    "effects": [
+      {
+        "note": "GLOW",
+        "value": 1
+      },
+      {
+        "note": "HUM",
+        "value": 2
+      }
+    ],
+    "extra_descs": [],
+    "id": 5103,
+    "level": null,
+    "long_desc": "A whip with three snake heads has been left here.",
+    "perm_affects": [],
+    "rent": 2300,
+    "short_desc": "a three-headed snake whip",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      2,
+      7,
+      3
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 12
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 18,
+        "note": "HITROLL",
+        "value": 2
+      },
+      {
+        "location": 19,
+        "note": "DAMROLL",
+        "value": 2
+      }
+    ],
+    "aliases": [
+      "whip",
+      "snake",
+      "fourheaded"
+    ],
+    "cost": 10250,
+    "effects": [
+      {
+        "note": "GLOW",
+        "value": 1
+      },
+      {
+        "note": "HUM",
+        "value": 2
+      }
+    ],
+    "extra_descs": [],
+    "id": 5104,
+    "level": null,
+    "long_desc": "A whip with four snake heads has been carelessly left here.",
+    "perm_affects": [],
+    "rent": 4000,
+    "short_desc": "a four-headed snake whip",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      2,
+      8,
+      3
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 12
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 18,
+        "note": "HITROLL",
+        "value": 2
+      },
+      {
+        "location": 19,
+        "note": "DAMROLL",
+        "value": 2
+      }
+    ],
+    "aliases": [
+      "longsword",
+      "black"
+    ],
+    "cost": 10250,
+    "effects": [
+      {
+        "note": "GLOW",
+        "value": 1
+      },
+      {
+        "note": "MAGIC",
+        "value": 64
+      },
+      {
+        "note": "ANTI_MAGIC_USER",
+        "value": 4096
+      }
+    ],
+    "extra_descs": [],
+    "id": 5105,
+    "level": null,
+    "long_desc": "A black longsword has been carelessly left here.",
+    "perm_affects": [],
+    "rent": 4000,
+    "short_desc": "a black longsword",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      2,
+      8,
+      3
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 12
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 1,
+        "note": "STR",
+        "value": -2
+      },
+      {
+        "location": 3,
+        "note": "INT",
+        "value": -2
+      }
+    ],
+    "aliases": [
+      "whip",
+      "snake",
+      "fiveheaded"
+    ],
+    "cost": 12000,
+    "effects": [
+      {
+        "note": "GLOW",
+        "value": 1
+      },
+      {
+        "note": "MAGIC",
+        "value": 64
+      },
+      {
+        "note": "ANTI_GOOD",
+        "value": 512
+      }
+    ],
+    "extra_descs": [],
+    "id": 5106,
+    "level": null,
+    "long_desc": "A whip with 5 snake heads has been carelessly dropped here.",
+    "perm_affects": [],
+    "rent": 4500,
+    "short_desc": "a five-headed snake whip",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      3,
+      6,
+      3
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 12
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 1,
+        "note": "STR",
+        "value": -3
+      },
+      {
+        "location": 3,
+        "note": "INT",
+        "value": -3
+      }
+    ],
+    "aliases": [
+      "whip",
+      "snake",
+      "sixheaded"
+    ],
+    "cost": 15000,
+    "effects": [
+      {
+        "note": "GLOW",
+        "value": 1
+      },
+      {
+        "note": "MAGIC",
+        "value": 64
+      },
+      {
+        "note": "ANTI_GOOD",
+        "value": 512
+      }
+    ],
+    "extra_descs": [],
+    "id": 5107,
+    "level": null,
+    "long_desc": "A whip with six snake heads has been dropped here very carelessly.",
+    "perm_affects": [],
+    "rent": 8000,
+    "short_desc": "a six-headed snake whip",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      4,
+      5,
+      3
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 12
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 18,
+        "note": "HITROLL",
+        "value": -1
+      }
+    ],
+    "aliases": [
+      "bracers",
+      "iron"
+    ],
+    "cost": 2000,
+    "effects": [
+      {
+        "note": "GLOW",
+        "value": 1
+      },
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [],
+    "id": 5108,
+    "level": null,
+    "long_desc": "A pair of iron bracers has been dropped here.",
+    "perm_affects": [],
+    "rent": 1000,
+    "short_desc": "a pair of bracers",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      8,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_ARMS",
+        "value": 256
+      }
+    ],
+    "weight": 3
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 1,
+        "note": "STR",
+        "value": 2
+      }
+    ],
+    "aliases": [
+      "gauntlets"
+    ],
+    "cost": 10000,
+    "effects": [
+      {
+        "note": "GLOW",
+        "value": 1
+      }
+    ],
+    "extra_descs": [],
+    "id": 5109,
+    "level": null,
+    "long_desc": "A pair of gauntlets is lying on the ground.",
+    "perm_affects": [],
+    "rent": 3000,
+    "short_desc": "a pair of gauntlets",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WORN",
+      "value": 11
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HANDS",
+        "value": 128
+      }
+    ],
+    "weight": 2
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "wand",
+      "blue",
+      "silver"
+    ],
+    "cost": 4000,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [],
+    "id": 5110,
+    "level": null,
+    "long_desc": "A silvery blue wand has been dropped in the dirt.",
+    "perm_affects": [],
+    "rent": 3000,
+    "short_desc": "a silvery blue wand",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WAND",
+      "value": 3
+    },
+    "values": [
+      10,
+      3,
+      3,
+      30
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 3,
+        "note": "INT",
+        "value": 3
+      }
+    ],
+    "aliases": [
+      "helmet",
+      "small"
+    ],
+    "cost": 6000,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [],
+    "id": 5111,
+    "level": null,
+    "long_desc": "A small helmet lies up against a rock.",
+    "perm_affects": [],
+    "rent": 3000,
+    "short_desc": "a small helmet",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HEAD",
+        "value": 16
+      }
+    ],
+    "weight": 5
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 13,
+        "note": "HIT",
+        "value": 25
+      }
+    ],
+    "aliases": [
+      "ring",
+      "ruby"
+    ],
+    "cost": 20000,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [],
+    "id": 5112,
+    "level": null,
+    "long_desc": "A small ruby ring lies in the dirt.",
+    "perm_affects": [],
+    "rent": 8000,
+    "short_desc": "a small ruby ring",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WORN",
+      "value": 11
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_FINGER",
+        "value": 2
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 18,
+        "note": "HITROLL",
+        "value": 3
+      },
+      {
+        "location": 19,
+        "note": "DAMROLL",
+        "value": 3
+      }
+    ],
+    "aliases": [
+      "dagger",
+      "sacrificial",
+      "spider"
+    ],
+    "cost": 12000,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      },
+      {
+        "note": "ANTI_GOOD",
+        "value": 512
+      },
+      {
+        "note": "ANTI_MAGIC_USER",
+        "value": 4096
+      },
+      {
+        "note": "ANTI_CLERIC",
+        "value": 8192
+      },
+      {
+        "note": "ANTI_WARRIOR",
+        "value": 32768
+      }
+    ],
+    "extra_descs": [],
+    "id": 5113,
+    "level": null,
+    "long_desc": "A dagger with spider leg shaped blades lies on the ground.",
+    "perm_affects": [],
+    "rent": 15000,
+    "short_desc": "a spider shaped dagger",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      3,
+      4,
+      11
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 8
+  },
+  {
+    "action_desc": null,
+    "affects": [
+      {
+        "location": 9,
+        "note": "AGE",
+        "value": -15
+      },
+      {
+        "location": 17,
+        "note": "AC",
+        "value": -2
+      }
+    ],
+    "aliases": [
+      "hat",
+      "green"
+    ],
+    "cost": 2000,
+    "effects": [
+      {
+        "note": "NODROP",
+        "value": 128
+      }
+    ],
+    "extra_descs": [],
+    "id": 5114,
+    "level": null,
+    "long_desc": "A small bright green hat lies in the dirt.",
+    "perm_affects": [],
+    "rent": 600,
+    "short_desc": "a small bright green hat",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      10,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HEAD",
+        "value": 16
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "key",
+      "adamantite"
+    ],
+    "cost": 0,
+    "effects": [
+      {
+        "note": "NORENT",
+        "value": 4
+      }
+    ],
+    "extra_descs": [],
+    "id": 5115,
+    "level": null,
+    "long_desc": "A key made of a strange metal is lying here.",
+    "perm_affects": [],
+    "rent": 0,
+    "short_desc": "an adamantite key",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "KEY",
+      "value": 18
+    },
+    "values": [
+      5115,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "gold",
+      "treasure",
+      "coins"
+    ],
+    "cost": 17645,
+    "effects": [],
+    "extra_descs": [],
+    "id": 5116,
+    "level": null,
+    "long_desc": "A large pile of golden coins is lying here.",
+    "perm_affects": [],
+    "rent": 0,
+    "short_desc": "a pile of golden coins",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "MONEY",
+      "value": 20
+    },
+    "values": [
+      17645,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 10
+  }
+]

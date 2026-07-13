@@ -1,9 +1,11 @@
+import re
+
 from pydantic import BaseModel, Field
 
 from .constants import (ObjectAffectLocation, ObjectExtraEffect, ObjectType,
-                        ObjectWear)
+                        ObjectWear, TbaMobAffect)
 from .models import ExtraDescription, Flag
-from .utils import _lookup_enum, lookup_value_to_dict, parse_flags
+from .utils import _lookup_enum, lookup_value_to_dict, parse_flags_wide
 
 
 class Affect(BaseModel):
@@ -54,53 +56,71 @@ class Object(BaseModel):
     type: Flag = Field(..., description="Object type (weapon, armor, etc.)")
     effects: list[Flag] = Field(default_factory=list, description="Extra effects (glow, hum, etc.)")
     wear: list[Flag] = Field(default_factory=list, description="Wear positions")
+    perm_affects: list[Flag] = Field(default_factory=list, description="Permanent affects when worn (tbaMUD)")
     values: list[int] = Field(..., description="Type-specific values")
     weight: int = Field(..., description="Object weight")
     cost: int = Field(..., description="Value in gold")
     rent: int = Field(..., description="Daily rent cost")
+    level: int | None = Field(None, description="Minimum level to use (tbaMUD)")
+    timer: int | None = Field(None, description="Object timer (tbaMUD)")
     affects: list[Affect] = Field(default_factory=list, description="Stat modifiers when worn")
     extra_descs: list[ExtraDescription] = Field(default_factory=list, description="Extra descriptions")
-    triggers: list[int] = Field(default_factory=list, description="Attached DG trigger VNUMs")
+    triggers: list[int] = Field(default_factory=list, description="Attached DG script trigger VNUMs (tbaMUD)")
 
     @classmethod
     def from_text(cls, text: str) -> "Object":
         """Parse a CircleMUD object definition from raw text."""
-        fields = [line.rstrip() for line in text.strip().split('\n')]
+        # The four leading text fields are '~'-terminated and may span
+        # multiple lines, so slice on tilde positions rather than lines.
+        tildes = [i for i, a in enumerate(text) if a == '~']
+        head = text[:tildes[0]].split('\n')
 
-        # easy fields
-        obj_id = int(fields[0])
-        aliases = fields[1].rstrip('~').split()
-        short_desc = fields[2].rstrip('~')
-        long_desc = fields[3].rstrip('~')
-        values = [int(v) for v in fields[6].split()]
-        weight, cost, rent = (int(v) for v in fields[7].split()[:3])
+        obj_id = int(head[0])
+        aliases = head[1].split()
+        short_desc = text[tildes[0] + 1:tildes[1]].strip('\n')
+        long_desc = text[tildes[1] + 1:tildes[2]].strip('\n')
+        action_desc = text[tildes[2] + 1:tildes[3]].strip('\n') or None
 
-        vector_fields = fields[5].split()
-        type_flag = vector_fields[0]
-        effects_bits = vector_fields[1] if len(vector_fields) > 1 else "0"
-        wear_bitvector = vector_fields[5] if len(vector_fields) > 5 else vector_fields[-1]
+        fields = [line.rstrip() for line in text[tildes[3] + 1:].strip('\n').split('\n')]
+
+        # Stock CircleMUD: "<type> <effects> <wear>". tbaMUD 128-bit:
+        # "<type> <effects x4> <wear x4> <perm affects x4>".
+        flag_tokens = fields[0].split()
+        type_flag, flag_fields = flag_tokens[0], flag_tokens[1:]
+        if len(flag_fields) >= 12:
+            effect_fields, wear_fields, perm_fields = (
+                flag_fields[0:4], flag_fields[4:8], flag_fields[8:12])
+        else:
+            effect_fields, wear_fields, perm_fields = (
+                flag_fields[:1], flag_fields[1:2], [])
 
         # type flag is always an int
         type_dict = lookup_value_to_dict(int(type_flag), ObjectType)
         obj_type = Flag(**type_dict)
 
         # parse the bitvectors
-        effects = parse_flags(effects_bits, ObjectExtraEffect)
-        wear = parse_flags(wear_bitvector, ObjectWear)
+        effects = parse_flags_wide(effect_fields, ObjectExtraEffect)
+        wear = parse_flags_wide(wear_fields, ObjectWear)
+        perm_affects = parse_flags_wide(perm_fields, TbaMobAffect)
 
-        action_desc = fields[4].rstrip('~') or None
+        values = [int(v) for v in fields[1].split()]
+
+        # Stock CircleMUD: "<weight> <cost> <rent>". tbaMUD appends
+        # "<level>" and (in newer versions) "<timer>".
+        weight_tokens = [int(v) for v in fields[2].split()]
+        weight, cost, rent = weight_tokens[:3]
+        level = weight_tokens[3] if len(weight_tokens) > 3 else None
+        timer = weight_tokens[4] if len(weight_tokens) > 4 else None
 
         affects = []
         extra_descs = []
-        if len(fields) > 8:
-            extra_fields = fields[8:]
+        triggers = []
+        if len(fields) > 3:
+            extra_fields = fields[3:]
             affects = Affect.from_fields(extra_fields)
             extra_descs = parse_extra_descriptions_from_fields(extra_fields)
-        triggers = [
-            int(field.split()[1])
-            for field in fields[8:]
-            if field.startswith("T ") and len(field.split()) > 1
-        ]
+            triggers = [int(f.split()[1]) for f in extra_fields
+                        if re.fullmatch(r'T +\d+', f.strip())]
 
         return cls(
             id=obj_id,
@@ -111,10 +131,13 @@ class Object(BaseModel):
             type=obj_type,
             effects=effects,
             wear=wear,
+            perm_affects=perm_affects,
             values=values,
             weight=weight,
             cost=cost,
             rent=rent,
+            level=level,
+            timer=timer,
             affects=affects,
             extra_descs=extra_descs,
             triggers=triggers,

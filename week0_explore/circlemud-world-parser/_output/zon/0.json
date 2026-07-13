@@ -1,0 +1,27 @@
+[
+  {
+    "bottom_room": 0,
+    "builders": null,
+    "doors": [],
+    "flags": [],
+    "id": 0,
+    "lifespan": 10,
+    "max_level": null,
+    "min_level": null,
+    "mobs": [
+      {
+        "equipped": [],
+        "inventory": [],
+        "max": 1,
+        "mob": 1,
+        "room": 1
+      }
+    ],
+    "name": "Limbo - Internal",
+    "objects": [],
+    "remove_objects": [],
+    "reset_mode": 2,
+    "top_room": 99,
+    "triggers": []
+  }
+]

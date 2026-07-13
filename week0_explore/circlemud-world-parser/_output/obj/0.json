@@ -1,0 +1,120 @@
+[
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "bug"
+    ],
+    "cost": 0,
+    "effects": [],
+    "extra_descs": [],
+    "id": 0,
+    "level": null,
+    "long_desc": "This object is BAD!  If you see it, there must be a bug in the game.  Please\nreport it immediately using the BUG command.",
+    "perm_affects": [],
+    "rent": 0,
+    "short_desc": "a bug",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "TRASH",
+      "value": 13
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [],
+    "weight": 0
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "wings"
+    ],
+    "cost": 0,
+    "effects": [],
+    "extra_descs": [],
+    "id": 1,
+    "level": null,
+    "long_desc": "A pair of wings is sitting here.",
+    "perm_affects": [],
+    "rent": 200,
+    "short_desc": "a pair of wings",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      6,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HEAD",
+        "value": 16
+      }
+    ],
+    "weight": 0
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "waybread",
+      "bread"
+    ],
+    "cost": 50,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "The waybread is the traditional feed of elves when travelling, they\ncall it lembas.  It is said to refresh the weary traveler greatly.",
+        "keywords": [
+          "waybread",
+          "bread"
+        ]
+      }
+    ],
+    "id": 10,
+    "level": null,
+    "long_desc": "Some waybread has been put here.",
+    "perm_affects": [],
+    "rent": 50,
+    "short_desc": "a waybread",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "FOOD",
+      "value": 19
+    },
+    "values": [
+      24,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 1
+  }
+]

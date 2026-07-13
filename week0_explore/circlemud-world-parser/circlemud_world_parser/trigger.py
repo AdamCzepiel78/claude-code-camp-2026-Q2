@@ -1,75 +1,68 @@
 """
-Triggers (DG Scripts) — tbaMUD's `world/trg/*.trg` files.
+Parser for tbaMUD DG script trigger (.trg) files.
 
-A trigger record looks like:
+Format (see parse_trigger in tbaMUD's dg_db_scripts.c):
 
-    #3098
-    Hello Midgaard DG Test~          <- name (~-terminated)
-    0 g 100                          <- attach_type, trigger-type bitvector, numeric arg
-    ~                                <- arglist (here empty, ~-terminated)
-    wait 1 sec                       ┐
-    say Welcome to Midgaard, ...     ├ command body (the DG script)
-    ~                                ┘ <- terminator
-
-The script body is captured verbatim — we do not interpret the DG language. The
-attach_type/trigger-type tables are lifted from tbaMUD's src/dg_scripts.h via
-constants.py (see TRIGGER_TYPE_TABLE).
+    #<vnum>
+    <name>~
+    <attach type> <trigger type flags> <numeric arg>
+    <argument list>~
+    <script commands, one per line>
+    ~
 """
 from pydantic import BaseModel, Field
 
-from .constants import TRIGGER_TYPE_TABLE, TriggerAttachType
+from .constants import (MobTriggerType, ObjTriggerType, TriggerAttachType,
+                        WldTriggerType)
 from .models import Flag
-from .utils import lookup_value_to_dict, parse_flags
+from .utils import FlagEnum, lookup_value_to_dict, parse_flags
+
+TRIGGER_TYPE_LOOKUP: dict[int, FlagEnum] = {
+    TriggerAttachType.MOB: MobTriggerType,
+    TriggerAttachType.OBJ: ObjTriggerType,
+    TriggerAttachType.WLD: WldTriggerType,
+}
 
 
 class Trigger(BaseModel):
-    """A tbaMUD DG Script trigger definition."""
+    """A tbaMUD DG script trigger definition."""
 
-    id: int = Field(..., description="Trigger VNUM")
+    id: int = Field(..., description="Virtual number (VNUM)")
     name: str = Field(..., description="Trigger name")
-    attach_type: Flag = Field(..., description="What it attaches to (MOB/OBJ/WLD)")
-    trigger_types: list[Flag] = Field(
-        default_factory=list, description="Decoded trigger-type bitvector"
-    )
-    numeric_arg: int = Field(0, description="Percent chance / command subtype (per type)")
-    arglist: str = Field("", description="Argument line (e.g. command keyword); may be empty")
-    commands: str = Field("", description="Raw DG script body, newlines preserved")
+    attach_type: Flag = Field(..., description="What the trigger attaches to (0=mob, 1=obj, 2=room)")
+    trigger_types: list[Flag] = Field(default_factory=list, description="Events that fire the trigger")
+    numeric_arg: int = Field(..., description="Numeric argument (e.g. firing percentage)")
+    arg_list: str | None = Field(None, description="Argument list (e.g. command or speech phrase)")
+    commands: list[str] = Field(default_factory=list, description="Script command lines")
 
     @classmethod
     def from_text(cls, text: str) -> "Trigger":
-        """Parse a single trigger record from raw text."""
-        lines = text.split('\n')
-        trig_id = int(lines[0].lstrip('#'))
+        """Parse a DG script trigger definition from raw text."""
+        # Layout by '~' terminators: name ends at the first, the attach
+        # line plus argument list end at the second, commands at the third.
+        tildes = [i for i, a in enumerate(text) if a == '~']
 
-        # Everything after the vnum line splits on '~' into: name, then the
-        # meta-line + arglist block, then the command body. Indexing positionally
-        # tolerates the missing final '~' the file-level rstrip removes from the
-        # last record in a file.
-        rest = '\n'.join(lines[1:])
-        parts = rest.split('~')
+        head = text[:tildes[0]].split('\n')
+        trigger_id = int(head[0])
+        name = '\n'.join(head[1:]).strip('\n')
 
-        name = parts[0].strip()
+        middle = text[tildes[0] + 1:tildes[1]].strip('\n').split('\n')
+        attach_type_raw, type_flags, numeric_arg = middle[0].split()
+        arg_list = '\n'.join(middle[1:]) or None
 
-        meta_block = parts[1].lstrip('\n') if len(parts) > 1 else ''
-        meta_lines = meta_block.split('\n')
-        meta_tokens = meta_lines[0].split()
-        attach_value = int(meta_tokens[0])
-        bitvector = meta_tokens[1] if len(meta_tokens) > 1 else '0'
-        numeric_arg = int(meta_tokens[2]) if len(meta_tokens) > 2 else 0
-        arglist = '\n'.join(meta_lines[1:]).strip()
+        attach_type = Flag(**lookup_value_to_dict(int(attach_type_raw), TriggerAttachType))
+        type_enum = TRIGGER_TYPE_LOOKUP.get(int(attach_type_raw), MobTriggerType)
+        trigger_types = parse_flags(type_flags, type_enum)
 
-        commands = parts[2].strip('\n') if len(parts) > 2 else ''
-
-        attach_type = TriggerAttachType(attach_value)
-        attach_flag = Flag(**lookup_value_to_dict(attach_value, TriggerAttachType))
-        trigger_types = parse_flags(bitvector, TRIGGER_TYPE_TABLE[attach_type])
+        commands_raw = text[tildes[1] + 1:tildes[2]].strip('\n')
+        commands = commands_raw.split('\n') if commands_raw else []
 
         return cls(
-            id=trig_id,
+            id=trigger_id,
             name=name,
-            attach_type=attach_flag,
+            attach_type=attach_type,
             trigger_types=trigger_types,
-            numeric_arg=numeric_arg,
-            arglist=arglist,
+            numeric_arg=int(numeric_arg),
+            arg_list=arg_list,
             commands=commands,
         )

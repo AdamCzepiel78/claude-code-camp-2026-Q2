@@ -56,14 +56,7 @@ def test_parse_individual_file(file_type, filepath):
     parser_func, splitter = parse.PARSER_LOOKUP[file_type]
     payload, errors = parse_from_file(filepath, parser_func, splitter)
 
-    filename = Path(filepath).name
-    if filename == '0.obj':
-        # This file has a known intentional error (bug object)
-        assert len(errors) == 1
-        expected = '0\nbug~\na bug~\nThis object is BAD!'
-        assert expected in errors[0]['text']
-    else:
-        assert errors == [], f"Unexpected errors parsing {filepath}: {errors}"
+    assert errors == [], f"Unexpected errors parsing {filepath}: {errors}"
 
     # Verify we got parseable results
     assert isinstance(payload, list)

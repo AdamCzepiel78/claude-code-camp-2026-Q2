@@ -91,6 +91,23 @@ def parse_flags(raw_bitvector: str, enum_cls: FlagEnum) -> list["Flag"]:
     return [Flag(**f) for f in flag_dicts]
 
 
+def parse_flags_wide(raw_fields: list[str], enum_cls: FlagEnum) -> list["Flag"]:
+    """Parse tbaMUD 128-bit flags split across multiple fields.
+
+    Each field holds 32 bits; field N's bits are shifted up by 32*N so the
+    combined values stay unique. Only field 0 is covered by the enums, so
+    flags from later fields carry no note.
+    """
+    from .models import Flag  # Import here to avoid circular imports
+
+    flags: list[Flag] = []
+    for i, raw_field in enumerate(raw_fields):
+        for number in bitvector_to_numbers(clean_bitvector(raw_field)):
+            note = _lookup_enum(number, enum_cls) if i == 0 else None
+            flags.append(Flag(value=number << (32 * i), note=note))
+    return flags
+
+
 def lookup_value_to_dict(value: int, enum_cls: FlagEnum) -> FlagDict:
     """Look up a single value in an enum class and return as FlagDict."""
     note = _lookup_enum(value, enum_cls)
@@ -101,9 +118,11 @@ def split_on_vnums(file_text: str) -> Iterator[str]:
     """
     Split the file on lines in the form of a vnum (e.g. '#1234').
 
-    This is important because lines within entries can (and do) start with '#'.
+    A vnum must be the entire line ('#1234~' in shop files) — lines within
+    entries can (and do) start with '#', e.g. '#00 -- add entrance' inside
+    a room description.
     """
-    pattern = re.compile(r'^#(\d+)', re.MULTILINE)
+    pattern = re.compile(r'^#(\d+)~?[ \t\r]*$', re.MULTILINE)
     pieces = pattern.split(file_text)
     for vnum, text in zip(pieces[1::2], pieces[2::2]):
         yield vnum + text
@@ -153,7 +172,9 @@ def parse_from_file(
     if validate:
         validate(file_text)
 
-    file_text = file_text.rstrip('$\n')  # world files
-    file_text = file_text.rstrip('$~\n')  # shop files
+    # Drop the end-of-file terminator: '$' for world files, '$~' for shop
+    # and trigger files. A plain rstrip over the character set would also
+    # eat a final '~' belonging to the last entry.
+    file_text = re.sub(r'\$~?\s*\Z', '', file_text)
 
     return parse_from_string(file_text, parser, splitter=splitter)

@@ -95,38 +95,47 @@ class Shop(BaseModel):
     rooms: list[int] = Field(default_factory=list, description="VNUMs of rooms where shop operates")
     times: list[OpeningHours] = Field(..., description="Opening hours (two periods)")
 
+    @staticmethod
+    def _take_until_delimiter(fields: list[str], start: int) -> tuple[list[str], int]:
+        """Collect lines until a '-1' list terminator.
+
+        Returns the collected lines and the index just past the terminator.
+        Delimiters must be found positionally: '-1' is also a legitimate
+        value elsewhere (e.g. a shop with no shopkeeper).
+        """
+        stop = start
+        while fields[stop] != '-1':
+            stop += 1
+        return fields[start:stop], stop + 1
+
     @classmethod
     def from_text(cls, text: str) -> "Shop":
         """Parse a CircleMUD shop definition from raw text."""
         fields = [line.rstrip() for line in text.strip().split('\n')]
-        delimiters = [i for i, field in enumerate(fields) if field == '-1']
 
         shop_id = int(fields[0].lstrip('#').rstrip('~'))
 
-        objects_start, objects_stop = 1, delimiters[0]
-        objects = [int(f) for f in fields[objects_start:objects_stop]]
+        objects_raw, i = cls._take_until_delimiter(fields, 1)
+        objects = [int(f) for f in objects_raw]
 
-        sell_rate = float(fields[objects_stop + 1])
-        buy_rate = float(fields[objects_stop + 2])
+        sell_rate = float(fields[i])
+        buy_rate = float(fields[i + 1])
 
-        types_start, types_stop = objects_stop + 3, delimiters[1]
-        buy_types = [BuyType.from_line(t) for t in fields[types_start:types_stop]]
+        buy_types_raw, i = cls._take_until_delimiter(fields, i + 2)
+        buy_types = [BuyType.from_line(t) for t in buy_types_raw]
 
-        messages_start, messages_stop = delimiters[1] + 1, delimiters[1] + 8
-        messages = ShopMessages.from_list(fields[messages_start:messages_stop])
+        messages = ShopMessages.from_list(fields[i:i + 7])
+        i += 7
 
-        temper = int(fields[messages_stop])
+        temper = int(fields[i])
+        flags = parse_flags(fields[i + 1], ShopFlag)
+        shopkeeper = int(fields[i + 2])
+        trades_with = parse_flags(fields[i + 3], ShopTradesWith)
 
-        flags = parse_flags(fields[messages_stop + 1], ShopFlag)
+        rooms_raw, i = cls._take_until_delimiter(fields, i + 4)
+        rooms = [int(r) for r in rooms_raw]
 
-        shopkeeper = int(fields[messages_stop + 2])
-
-        trades_with = parse_flags(fields[messages_stop + 3], ShopTradesWith)
-
-        rooms_start, rooms_stop = messages_stop + 4, delimiters[2]
-        rooms = [int(r) for r in fields[rooms_start:rooms_stop]]
-
-        times_raw = [int(t) for t in fields[rooms_stop + 1:]]
+        times_raw = [int(t) for t in fields[i:]]
         if len(times_raw) != 4:
             raise ValueError('Unexpected number of open/close times')
         times = [

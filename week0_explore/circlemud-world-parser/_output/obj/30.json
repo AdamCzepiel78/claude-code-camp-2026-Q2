@@ -1,0 +1,2509 @@
+[
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "barrel",
+      "beer"
+    ],
+    "cost": 300,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3000,
+    "level": null,
+    "long_desc": "A beer barrel has been left here.",
+    "perm_affects": [],
+    "rent": 100,
+    "short_desc": "a barrel",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "DRINKCON",
+      "value": 17
+    },
+    "values": [
+      50,
+      50,
+      1,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 65
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "bottle",
+      "beer"
+    ],
+    "cost": 20,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3001,
+    "level": null,
+    "long_desc": "A beer bottle has been left here.",
+    "perm_affects": [],
+    "rent": 8,
+    "short_desc": "a bottle",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "DRINKCON",
+      "value": 17
+    },
+    "values": [
+      8,
+      8,
+      1,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 10
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "bottle",
+      "dark",
+      "ale"
+    ],
+    "cost": 10,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3002,
+    "level": null,
+    "long_desc": "A dark bottle of ale has been left here.",
+    "perm_affects": [],
+    "rent": 3,
+    "short_desc": "a bottle",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "DRINKCON",
+      "value": 17
+    },
+    "values": [
+      8,
+      8,
+      3,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 10
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "bottle",
+      "firebreather"
+    ],
+    "cost": 50,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3003,
+    "level": null,
+    "long_desc": "A bottle of firebreather has been left here.",
+    "perm_affects": [],
+    "rent": 17,
+    "short_desc": "a bottle",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "DRINKCON",
+      "value": 17
+    },
+    "values": [
+      8,
+      8,
+      7,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 10
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "bottle",
+      "local"
+    ],
+    "cost": 20,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3004,
+    "level": null,
+    "long_desc": "A dark bottle has been left here.",
+    "perm_affects": [],
+    "rent": 7,
+    "short_desc": "a bottle",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "DRINKCON",
+      "value": 17
+    },
+    "values": [
+      8,
+      8,
+      8,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 10
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "key",
+      "dull",
+      "metal"
+    ],
+    "cost": 0,
+    "effects": [
+      {
+        "note": "NORENT",
+        "value": 4
+      },
+      {
+        "note": "NODONATE",
+        "value": 8
+      },
+      {
+        "note": "NOSELL",
+        "value": 65536
+      }
+    ],
+    "extra_descs": [],
+    "id": 3005,
+    "level": null,
+    "long_desc": "A key made of a dull metal is lying on the ground here.",
+    "perm_affects": [],
+    "rent": 0,
+    "short_desc": "a key of dull metal",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "KEY",
+      "value": 18
+    },
+    "values": [
+      3005,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "waybread",
+      "bread"
+    ],
+    "cost": 50,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "The waybread is the traditional feed of elves when travelling, they\ncall it lembas.  It is said to refresh the weary traveler greatly.",
+        "keywords": [
+          "waybread",
+          "bread"
+        ]
+      }
+    ],
+    "id": 3009,
+    "level": null,
+    "long_desc": "Some waybread has been put here.",
+    "perm_affects": [],
+    "rent": 50,
+    "short_desc": "a waybread",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "FOOD",
+      "value": 19
+    },
+    "values": [
+      24,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "bread",
+      "loaf"
+    ],
+    "cost": 10,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3010,
+    "level": null,
+    "long_desc": "A loaf of bread has been left here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a bread",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "FOOD",
+      "value": 19
+    },
+    "values": [
+      12,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "danish",
+      "pastry"
+    ],
+    "cost": 5,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3011,
+    "level": null,
+    "long_desc": "A nice looking delicious danish pastry has been placed here.",
+    "perm_affects": [],
+    "rent": 5,
+    "short_desc": "a danish pastry",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "FOOD",
+      "value": 19
+    },
+    "values": [
+      5,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "taco",
+      "mexican"
+    ],
+    "cost": 15,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3012,
+    "level": null,
+    "long_desc": "A tasty looking Mexican taco has been dropped here.",
+    "perm_affects": [],
+    "rent": 15,
+    "short_desc": "a Mexican taco",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "FOOD",
+      "value": 19
+    },
+    "values": [
+      15,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "burrito",
+      "hot"
+    ],
+    "cost": 10,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3013,
+    "level": null,
+    "long_desc": "A spicy looking burrito has been set here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a spicy hot burrito",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "FOOD",
+      "value": 19
+    },
+    "values": [
+      10,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "nachos",
+      "nacho"
+    ],
+    "cost": 5,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "They have cheese on them.  Looks like one of Uncle Juan's specials.",
+        "keywords": [
+          "nachos",
+          "nacho"
+        ]
+      }
+    ],
+    "id": 3014,
+    "level": null,
+    "long_desc": "Some nachos have been left here.",
+    "perm_affects": [],
+    "rent": 5,
+    "short_desc": "some nachos with cheese",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "FOOD",
+      "value": 19
+    },
+    "values": [
+      5,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "meat",
+      "chunk"
+    ],
+    "cost": 24,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "It isn't so much that the meat looks poisoned or anything, but that you\njust are not sure of its origins.  You doubt that a hunter would drop a\nside of venison or rabbit meat... what in the world could this meat have\ncome from, you wonder...",
+        "keywords": [
+          "meat",
+          "chunk"
+        ]
+      }
+    ],
+    "id": 3015,
+    "level": null,
+    "long_desc": "A rather dubious looking piece of meat is on the ground here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a piece of meat",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "FOOD",
+      "value": 19
+    },
+    "values": [
+      14,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 5
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "dagger"
+    ],
+    "cost": 10,
+    "effects": [
+      {
+        "note": "ANTI_CLERIC",
+        "value": 8192
+      }
+    ],
+    "extra_descs": [],
+    "id": 3020,
+    "level": null,
+    "long_desc": "A dagger with a long thin blade is here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a dagger",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      1,
+      4,
+      11
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "sword",
+      "small"
+    ],
+    "cost": 60,
+    "effects": [
+      {
+        "note": "ANTI_CLERIC",
+        "value": 8192
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "The small sword seems to have an inscription of some sort inscription...",
+        "keywords": [
+          "sword",
+          "small"
+        ]
+      },
+      {
+        "desc": "It says: 'May this sword be a good companion.'",
+        "keywords": [
+          "inscription"
+        ]
+      }
+    ],
+    "id": 3021,
+    "level": null,
+    "long_desc": "A small sword lies here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a small sword",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      1,
+      6,
+      11
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 3
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "sword",
+      "long"
+    ],
+    "cost": 600,
+    "effects": [
+      {
+        "note": "ANTI_CLERIC",
+        "value": 8192
+      }
+    ],
+    "extra_descs": [],
+    "id": 3022,
+    "level": null,
+    "long_desc": "A long sword has been left here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a long sword",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      1,
+      8,
+      3
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 8
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "club",
+      "wooden"
+    ],
+    "cost": 12,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3023,
+    "level": null,
+    "long_desc": "A simple looking wooden club is here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a wooden club",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      1,
+      3,
+      7
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 3
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "warhammer",
+      "hammer"
+    ],
+    "cost": 50,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3024,
+    "level": null,
+    "long_desc": "A medium sized warhammer is here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a warhammer",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      1,
+      5,
+      7
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 6
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "flail",
+      "large"
+    ],
+    "cost": 625,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3025,
+    "level": null,
+    "long_desc": "A large flail is here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a flail",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      2,
+      4,
+      7
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 6
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "torch"
+    ],
+    "cost": 10,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3030,
+    "level": null,
+    "long_desc": "A large torch.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a torch",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "LIGHT",
+      "value": 1
+    },
+    "values": [
+      0,
+      0,
+      24,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_BODY",
+        "value": 8
+      },
+      {
+        "note": "WEAR_HEAD",
+        "value": 16
+      },
+      {
+        "note": "WEAR_LEGS",
+        "value": 32
+      },
+      {
+        "note": "WEAR_ARMS",
+        "value": 256
+      },
+      {
+        "note": "WEAR_SHIELD",
+        "value": 512
+      },
+      {
+        "note": "WEAR_ABOUT",
+        "value": 1024
+      },
+      {
+        "note": "WEAR_WAIST",
+        "value": 2048
+      },
+      {
+        "note": "WEAR_WRIST",
+        "value": 4096
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "lantern",
+      "brass"
+    ],
+    "cost": 50,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3031,
+    "level": null,
+    "long_desc": "A brass lantern is here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a lantern",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "LIGHT",
+      "value": 1
+    },
+    "values": [
+      0,
+      0,
+      96,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_BODY",
+        "value": 8
+      },
+      {
+        "note": "WEAR_HEAD",
+        "value": 16
+      },
+      {
+        "note": "WEAR_LEGS",
+        "value": 32
+      },
+      {
+        "note": "WEAR_ARMS",
+        "value": 256
+      },
+      {
+        "note": "WEAR_SHIELD",
+        "value": 512
+      },
+      {
+        "note": "WEAR_ABOUT",
+        "value": 1024
+      },
+      {
+        "note": "WEAR_WAIST",
+        "value": 2048
+      },
+      {
+        "note": "WEAR_WRIST",
+        "value": 4096
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "bag"
+    ],
+    "cost": 20,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3032,
+    "level": null,
+    "long_desc": "A small bag is here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a bag",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "CONTAINER",
+      "value": 15
+    },
+    "values": [
+      50,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 2
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "box"
+    ],
+    "cost": 50,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3033,
+    "level": null,
+    "long_desc": "A small box is here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a box",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "CONTAINER",
+      "value": 15
+    },
+    "values": [
+      10,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 5
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "atm",
+      "teller",
+      "bank",
+      "machine"
+    ],
+    "cost": 0,
+    "effects": [
+      {
+        "note": "NORENT",
+        "value": 4
+      },
+      {
+        "note": "NODONATE",
+        "value": 8
+      },
+      {
+        "note": "NOINVIS",
+        "value": 16
+      },
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "There is a small note on the machine which says:\n\nTo use, type 'BALANCE', 'WITHDRAW <amount>', or 'DEPOSIT <amount>'.\nPlease report any strange occurrences to the bank manager.\n",
+        "keywords": [
+          "atm",
+          "teller",
+          "bank",
+          "machine"
+        ]
+      }
+    ],
+    "id": 3034,
+    "level": null,
+    "long_desc": "An automatic teller machine has been installed in the wall here.",
+    "perm_affects": [],
+    "rent": 0,
+    "short_desc": "an automatic teller machine",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "OTHER",
+      "value": 12
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [],
+    "weight": 5000
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "fountain",
+      "water"
+    ],
+    "cost": 0,
+    "effects": [
+      {
+        "note": "NORENT",
+        "value": 4
+      },
+      {
+        "note": "NODONATE",
+        "value": 8
+      },
+      {
+        "note": "NOINVIS",
+        "value": 16
+      },
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "It is a well crafted fountain, carved from a single piece of very beautiful\nwhite marble shot through with electric blue streaks that look almost like\nlightning dancing along the sides of the fountain.  It seems to be enchanted\nin some manner, as the water level seems to never lower.",
+        "keywords": [
+          "marble",
+          "blue",
+          "streaked"
+        ]
+      }
+    ],
+    "id": 3035,
+    "level": null,
+    "long_desc": "A large fountain carved from blue-streaked marble is here, bubbling merrily.",
+    "perm_affects": [],
+    "rent": 0,
+    "short_desc": "the large fountain",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "FOUNTAIN",
+      "value": 23
+    },
+    "values": [
+      9999,
+      9999,
+      15,
+      0
+    ],
+    "wear": [],
+    "weight": 9999
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "cashcard",
+      "card",
+      "atm"
+    ],
+    "cost": 10000,
+    "effects": [
+      {
+        "note": "NORENT",
+        "value": 4
+      },
+      {
+        "note": "NODONATE",
+        "value": 8
+      },
+      {
+        "note": "NOINVIS",
+        "value": 16
+      },
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "There is some writing on the back of the card which reads:\n\nTo use, type 'BALANCE', 'WITHDRAW <amount>', or 'DEPOSIT <amount>'.\nPlease report any strange occurrences to the bank manager.\n",
+        "keywords": [
+          "cashcard",
+          "card",
+          "atm"
+        ]
+      }
+    ],
+    "id": 3036,
+    "level": null,
+    "long_desc": "A handy dandy cashcard is sitting on the ground here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a cashcard",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "OTHER",
+      "value": 12
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "candle"
+    ],
+    "cost": 5,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "A home-made candle, how quaint!",
+        "keywords": [
+          "candle"
+        ]
+      }
+    ],
+    "id": 3037,
+    "level": null,
+    "long_desc": "A candle lies here, unlit.",
+    "perm_affects": [],
+    "rent": 1,
+    "short_desc": "a candle",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "LIGHT",
+      "value": 1
+    },
+    "values": [
+      0,
+      0,
+      4,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "nail"
+    ],
+    "cost": 5,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "Its a common iron nail, used for carpentry work.",
+        "keywords": [
+          "nail"
+        ]
+      }
+    ],
+    "id": 3038,
+    "level": null,
+    "long_desc": "A penny nail lies in the dust.",
+    "perm_affects": [],
+    "rent": 1,
+    "short_desc": "a nail",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WEAPON",
+      "value": 5
+    },
+    "values": [
+      0,
+      1,
+      1,
+      11
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_WIELD",
+        "value": 8192
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "pot"
+    ],
+    "cost": 100,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "It is a nice pot.  You could use it, if you ever settled down.",
+        "keywords": [
+          "pot"
+        ]
+      }
+    ],
+    "id": 3039,
+    "level": null,
+    "long_desc": "A cast-iron pot sits on the ground.",
+    "perm_affects": [],
+    "rent": 20,
+    "short_desc": "a pot",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "CONTAINER",
+      "value": 15
+    },
+    "values": [
+      10,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 10
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "plate",
+      "breast"
+    ],
+    "cost": 18000,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3040,
+    "level": null,
+    "long_desc": "A breast plate is lying on the ground.",
+    "perm_affects": [],
+    "rent": 150,
+    "short_desc": "a breast plate",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      7,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_BODY",
+        "value": 8
+      }
+    ],
+    "weight": 100
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "shirt",
+      "chain",
+      "mail"
+    ],
+    "cost": 2500,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3041,
+    "level": null,
+    "long_desc": "A chain mail shirt is lying on the ground.",
+    "perm_affects": [],
+    "rent": 50,
+    "short_desc": "a chain mail shirt",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      5,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_BODY",
+        "value": 8
+      }
+    ],
+    "weight": 60
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "shield",
+      "wooden"
+    ],
+    "cost": 100,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3042,
+    "level": null,
+    "long_desc": "A small wooden shield is lying on the ground.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a shield",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      2,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_SHIELD",
+        "value": 512
+      }
+    ],
+    "weight": 3
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "jacket",
+      "soft",
+      "leather"
+    ],
+    "cost": 200,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3043,
+    "level": null,
+    "long_desc": "A soft leather jacket is lying on the ground.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a leather jacket",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      2,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_BODY",
+        "value": 8
+      }
+    ],
+    "weight": 10
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "jacket",
+      "studded",
+      "leather"
+    ],
+    "cost": 500,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3044,
+    "level": null,
+    "long_desc": "A studded leather jacket is lying on the ground.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a studded leather jacket",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      3,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_BODY",
+        "value": 8
+      }
+    ],
+    "weight": 20
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "jacket",
+      "scale",
+      "mail"
+    ],
+    "cost": 1000,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3045,
+    "level": null,
+    "long_desc": "A scale mail jacket is lying on the ground.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a scale mail jacket",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      4,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_BODY",
+        "value": 8
+      }
+    ],
+    "weight": 40
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "plate",
+      "bronze",
+      "breast"
+    ],
+    "cost": 7000,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3046,
+    "level": null,
+    "long_desc": "A bronze breast plate is lying on the ground.",
+    "perm_affects": [],
+    "rent": 100,
+    "short_desc": "a bronze breast plate",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      6,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_BODY",
+        "value": 8
+      }
+    ],
+    "weight": 80
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "scroll",
+      "identify"
+    ],
+    "cost": 2001,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "The scroll has a magic formula drawn upon it:\n\n     ???\n    ?   ?\n       ?\n      ?\n      ?\n      *\n",
+        "keywords": [
+          "scroll",
+          "identify"
+        ]
+      }
+    ],
+    "id": 3050,
+    "level": null,
+    "long_desc": "A scroll has carelessly been left here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a scroll of identify",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "SCROLL",
+      "value": 2
+    },
+    "values": [
+      12,
+      201,
+      -1,
+      -1
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "potion",
+      "yellow"
+    ],
+    "cost": 400,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "The potion has a small label 'Detect The Invisible'.",
+        "keywords": [
+          "potion",
+          "yellow"
+        ]
+      }
+    ],
+    "id": 3051,
+    "level": null,
+    "long_desc": "A small yellow potion has carelessly been left here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a yellow potion of see invisible",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "POTION",
+      "value": 10
+    },
+    "values": [
+      12,
+      19,
+      -1,
+      -1
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 1
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "scroll",
+      "recall"
+    ],
+    "cost": 2001,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "The scroll has written a formulae of 'Word of Recall' upon it.",
+        "keywords": [
+          "scroll",
+          "recall"
+        ]
+      }
+    ],
+    "id": 3052,
+    "level": null,
+    "long_desc": "A scroll has carelessly been left here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a scroll of recall",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "SCROLL",
+      "value": 2
+    },
+    "values": [
+      12,
+      42,
+      -1,
+      -1
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 4
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "wand",
+      "grey"
+    ],
+    "cost": 4000,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "The wand is an old dark grey stick.  You notice a small symbol etched at\nthe base of the wand.  It looks like this:\n\n     \\ /\n    - O -\n     / \\\n",
+        "keywords": [
+          "wand",
+          "grey"
+        ]
+      }
+    ],
+    "id": 3053,
+    "level": null,
+    "long_desc": "A grey wand has carelessly been left here.",
+    "perm_affects": [],
+    "rent": 100,
+    "short_desc": "a grey wand of invisibility",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "WAND",
+      "value": 3
+    },
+    "values": [
+      12,
+      2,
+      2,
+      29
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 2
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "staff",
+      "gnarled"
+    ],
+    "cost": 7000,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "The staff is made of old oak, and is around five feet long. It fits\nperfectly into your hand. You notice a small symbol etched at the\nbase of the staff, it looks like:\n\n  ZZZZZ\n     Z\n    Z\n   Z\n  ZZZZZ  z   z\n",
+        "keywords": [
+          "staff",
+          "gnarled"
+        ]
+      }
+    ],
+    "id": 3054,
+    "level": null,
+    "long_desc": "A gnarled staff has carelessly been left here.",
+    "perm_affects": [],
+    "rent": 5000,
+    "short_desc": "a gnarled staff",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "STAFF",
+      "value": 4
+    },
+    "values": [
+      12,
+      1,
+      1,
+      38
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 17
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "staff",
+      "metal"
+    ],
+    "cost": 8500,
+    "effects": [
+      {
+        "note": "MAGIC",
+        "value": 64
+      }
+    ],
+    "extra_descs": [
+      {
+        "desc": "The staff is made of metals unknown to you.",
+        "keywords": [
+          "staff",
+          "metal"
+        ]
+      }
+    ],
+    "id": 3055,
+    "level": null,
+    "long_desc": "A metal staff has carelessly been left here.",
+    "perm_affects": [],
+    "rent": 300,
+    "short_desc": "a metal staff",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "STAFF",
+      "value": 4
+    },
+    "values": [
+      10,
+      8,
+      8,
+      15
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HOLD",
+        "value": 16384
+      }
+    ],
+    "weight": 7
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "raft"
+    ],
+    "cost": 400,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "The raft looks very primitive.",
+        "keywords": [
+          "raft"
+        ]
+      }
+    ],
+    "id": 3060,
+    "level": null,
+    "long_desc": "A raft has been left here.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a raft",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "BOAT",
+      "value": 22
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 75
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "canoe"
+    ],
+    "cost": 1000,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "The canoe is fairly light.",
+        "keywords": [
+          "canoe"
+        ]
+      }
+    ],
+    "id": 3061,
+    "level": null,
+    "long_desc": "A canoe has been left here.",
+    "perm_affects": [],
+    "rent": 100,
+    "short_desc": "a canoe",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "BOAT",
+      "value": 22
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      }
+    ],
+    "weight": 32
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "gauntlets",
+      "bronze"
+    ],
+    "cost": 1750,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3070,
+    "level": null,
+    "long_desc": "A pair of bronze gauntlets is lying on the ground.",
+    "perm_affects": [],
+    "rent": 100,
+    "short_desc": "a pair of bronze gauntlets",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      6,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HANDS",
+        "value": 128
+      }
+    ],
+    "weight": 8
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "gloves",
+      "leather"
+    ],
+    "cost": 75,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3071,
+    "level": null,
+    "long_desc": "A pair of leather gloves is lying on the ground.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a pair of leather gloves",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      3,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HANDS",
+        "value": 128
+      }
+    ],
+    "weight": 3
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "helmet",
+      "bronze"
+    ],
+    "cost": 3500,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3075,
+    "level": null,
+    "long_desc": "A bronze helmet is lying on the ground.",
+    "perm_affects": [],
+    "rent": 100,
+    "short_desc": "a bronze helmet",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      6,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HEAD",
+        "value": 16
+      }
+    ],
+    "weight": 8
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "cap",
+      "leather"
+    ],
+    "cost": 150,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3076,
+    "level": null,
+    "long_desc": "A leather cap is lying on the ground.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a leather cap",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      3,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_HEAD",
+        "value": 16
+      }
+    ],
+    "weight": 3
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "leggings",
+      "bronze"
+    ],
+    "cost": 3500,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3080,
+    "level": null,
+    "long_desc": "A pair of bronze leggings is lying on the ground.",
+    "perm_affects": [],
+    "rent": 100,
+    "short_desc": "a pair of bronze leggings",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      6,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_LEGS",
+        "value": 32
+      }
+    ],
+    "weight": 8
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "pants",
+      "leather"
+    ],
+    "cost": 150,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3081,
+    "level": null,
+    "long_desc": "A pair of leather pants is lying on the ground.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a pair of leather pants",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      3,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_LEGS",
+        "value": 32
+      }
+    ],
+    "weight": 8
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "sleeves",
+      "bronze"
+    ],
+    "cost": 1750,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3085,
+    "level": null,
+    "long_desc": "A pair of bronze sleeves is lying on the ground.",
+    "perm_affects": [],
+    "rent": 100,
+    "short_desc": "a pair of bronze sleeves",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      6,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_ARMS",
+        "value": 256
+      }
+    ],
+    "weight": 8
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "sleeves",
+      "leather"
+    ],
+    "cost": 75,
+    "effects": [],
+    "extra_descs": [],
+    "id": 3086,
+    "level": null,
+    "long_desc": "A pair of leather sleeves is lying on the ground.",
+    "perm_affects": [],
+    "rent": 10,
+    "short_desc": "a pair of leather sleeves",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "ARMOR",
+      "value": 9
+    },
+    "values": [
+      2,
+      0,
+      0,
+      0
+    ],
+    "wear": [
+      {
+        "note": "WEAR_TAKE",
+        "value": 1
+      },
+      {
+        "note": "WEAR_ARMS",
+        "value": 256
+      }
+    ],
+    "weight": 4
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "board",
+      "social",
+      "bulletin"
+    ],
+    "cost": 0,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "If you can read this, the board is not working.",
+        "keywords": [
+          "board"
+        ]
+      },
+      {
+        "desc": "Use 'look board' to read the board.",
+        "keywords": [
+          "social",
+          "bulletin"
+        ]
+      }
+    ],
+    "id": 3096,
+    "level": null,
+    "long_desc": "A large, sociable bulletin board is mounted on a wall here.",
+    "perm_affects": [],
+    "rent": 0,
+    "short_desc": "a social bulletin board",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "TRASH",
+      "value": 13
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [],
+    "weight": 0
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "board",
+      "frozen",
+      "bulletin"
+    ],
+    "cost": 0,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "If you can read this, the board is not working.",
+        "keywords": [
+          "board"
+        ]
+      },
+      {
+        "desc": "Use 'look board' to read the board.",
+        "keywords": [
+          "freeze",
+          "bulletin"
+        ]
+      }
+    ],
+    "id": 3097,
+    "level": null,
+    "long_desc": "A large bulletin board is here, carved from a block of ice.",
+    "perm_affects": [],
+    "rent": 0,
+    "short_desc": "a frozen bulletin board",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "TRASH",
+      "value": 13
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [],
+    "weight": 0
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "board",
+      "holy",
+      "bulletin"
+    ],
+    "cost": 0,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "If you can read this, the board is not working.",
+        "keywords": [
+          "board"
+        ]
+      },
+      {
+        "desc": "Use 'look board' to read the board.",
+        "keywords": [
+          "holy",
+          "bulletin"
+        ]
+      }
+    ],
+    "id": 3098,
+    "level": null,
+    "long_desc": "A large bulletin board is mounted on a wall here.  It glows with a faint aura.",
+    "perm_affects": [],
+    "rent": 0,
+    "short_desc": "a holy bulletin board",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "TRASH",
+      "value": 13
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [],
+    "weight": 0
+  },
+  {
+    "action_desc": null,
+    "affects": [],
+    "aliases": [
+      "board",
+      "bulletin"
+    ],
+    "cost": 0,
+    "effects": [],
+    "extra_descs": [
+      {
+        "desc": "If you can read this, the board is not working.",
+        "keywords": [
+          "board"
+        ]
+      },
+      {
+        "desc": "Use 'look board' to read the board.",
+        "keywords": [
+          "bulletin"
+        ]
+      }
+    ],
+    "id": 3099,
+    "level": null,
+    "long_desc": "A large bulletin board is mounted on a wall here.",
+    "perm_affects": [],
+    "rent": 0,
+    "short_desc": "a bulletin board",
+    "timer": null,
+    "triggers": [],
+    "type": {
+      "note": "TRASH",
+      "value": 13
+    },
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wear": [],
+    "weight": 0
+  }
+]

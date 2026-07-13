@@ -1,0 +1,30 @@
+[
+  {
+    "abandon_message": "You have abandoned the quest.",
+    "completion_message": "   Well done!  You have completed your quest!",
+    "desc": "mice",
+    "exp_reward": 0,
+    "flags": [],
+    "gold_reward": 10,
+    "id": 100,
+    "info": "   I really need some help killing these mice or the Sarge is going to make my\nlife a living hell.",
+    "max_level": 34,
+    "min_level": 1,
+    "name": "Kill the Mice!",
+    "next_quest": -1,
+    "obj_reward": 65535,
+    "penalty": 0,
+    "points": 0,
+    "prereq_object": -1,
+    "prev_quest": -1,
+    "quantity": 3,
+    "questmaster": 179,
+    "return_mob": -1,
+    "target": 194,
+    "time_limit": 60,
+    "type": {
+      "note": "MOB_KILL",
+      "value": 3
+    }
+  }
+]
