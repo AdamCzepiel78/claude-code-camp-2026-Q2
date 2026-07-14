@@ -1,0 +1,89 @@
+---
+name: mud
+description: Connect to and play the tbaMUD (CircleMUD-derived) instance running at localhost:4000 as the character "dummy". Use this whenever the player asks to explore this MUD world, find something or someone in it, talk to NPCs, fight, move around, check score/inventory, or otherwise act as their character in the game. Make sure to use this skill whenever the user mentions "the mud", "the game on port 4000", "my character dummy", or asks you to look around / walk / interact in that world -- even if they don't say "skill" or name the script directly. Do not hand-roll a telnet/nc/socket script for this MUD -- use the script this skill provides; the login sequence has real timing and menu quirks a naive script gets wrong (see "Why a script" below).
+---
+
+# MUD (port 4000)
+
+Plays the character `dummy` on the tbaMUD instance at `localhost:4000` by
+driving `scripts/mud_client.py`, which handles the connection, telnet
+negotiation, and login sequence deterministically.
+
+## Running commands
+
+```
+python3 scripts/mud_client.py "<command 1>" "<command 2>" ...
+```
+
+Each positional argument is one line sent to the MUD, in order, and the
+script prints the full transcript (login banner + the reply to every
+command). Examples:
+
+```
+python3 scripts/mud_client.py look
+python3 scripts/mud_client.py north north look
+python3 scripts/mud_client.py score inventory
+python3 scripts/mud_client.py "say hello" "look sign"
+```
+
+Multi-word commands must be one shell argument (quote them). Run it from
+this skill's directory, or pass the full path to `mud_client.py`.
+
+If the server isn't reachable, the script prints `Could not connect to
+localhost:4000 -- ...` to stderr and exits with a non-zero status rather
+than hanging or producing fake game output -- treat that as "the MUD is
+currently down," tell the player, and don't retry more than once or two.
+
+## Session model -- read this before choosing whether to pass --quit
+
+The character persists in the game world across separate invocations of
+this script, the same way a real MUD stays running when your telnet client
+loses its connection. By default the script logs in, runs your commands,
+and then just closes the socket **without** sending `quit` -- this leaves
+the character link-dead in the world so the *next* invocation reconnects
+and resumes exactly where you left off (same room, same state).
+
+Because of this:
+- You can call the script many times in a row, one or a few commands at a
+  time, to carry out a multi-step goal (e.g. navigate room by room). There
+  is no need to batch every command into a single call.
+- Never pass `--quit` just to "clean up" after a normal call -- that fully
+  logs the character out to the numbered character menu, which is extra
+  round-trips to undo next time. Only pass `--quit` when the player
+  actually wants to end the play session.
+
+## Useful flags
+
+- `--quit` -- after running the given commands, send `quit` (and exit the
+  numbered menu if it appears) to fully log out.
+- `--keep-color` -- keep ANSI color codes in the output instead of
+  stripping them (stripped by default for readability).
+- `--user` / `--password` -- override the default `dummy` / `helloworld`
+  credentials.
+- `--host` / `--port` -- override the default `localhost:4000`, e.g. if
+  the player mentions a different MUD instance.
+- `--idle` / `--max-wait` -- tune how long the script waits for a reply to
+  settle before moving on, if a command produces a lot of scrolling output.
+
+## Why a script, not ad-hoc telnet/nc
+
+This MUD's login has two quirks that make a naive per-turn script
+unreliable:
+
+1. The client-detection banner has a real (~1.5s) gap in the middle of it.
+   Reading "until idle" too eagerly and sending the username during that
+   gap causes it to be swallowed, and your first *game* command ends up
+   being interpreted as the character name instead.
+2. After the password, the server can either drop you straight back into
+   the game (if the link was merely dropped last time) *or* show a MOTD
+   "press return" gate followed by a numbered character menu (if the
+   previous session ended with `quit`) -- the exact sequence depends on
+   how the last session ended, not on anything you control this call.
+
+`mud_client.py` already handles both: it waits for literal prompt text
+(not just a quiet socket) to get past the banner, and it reacts to
+whichever prompts actually appear after the password until the in-game
+status bar (`NNH NNM NNV`) shows up. Re-deriving this from scratch in a
+fresh script every session is exactly the kind of token/turn waste this
+skill exists to avoid -- this login handling was debugged against the
+live server on localhost:4000.

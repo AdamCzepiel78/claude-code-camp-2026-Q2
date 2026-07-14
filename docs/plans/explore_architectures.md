@@ -28,4 +28,29 @@ Overall, while the task was completed successfully, the execution was considerab
 
 > using conding harnesses for coding, and for specialized agents make your own loop.
 
+## 2. Agent Skills driven by main agent eq. ~/.skills
+
+Agentic AI skills are a way to implement special functionality for an AI. They let the AI use tools, follow steps, and complete specific tasks to reach a goal.
+
+**Models:** Haiku 4.5, Opus 4.8, Sonnet 4.6
+
+### Technical Observations
+
+- Created the `02_agent_skills` directory and launched Claude Code with **Haiku 4.5** at **Effort: High**. The Coding Harness was asked to create a MUD game skill that connects to `localhost:4000` with credentials `dummy / helloworld` and is capable of playing CircleMUD.
+- Haiku 4.5 prompted for permissions repeatedly — roughly **10 confirmation dialogs** for script creation and directory permission changes.
+- The skill structure was only partially correct: `.claude/skills/mud/SKILL.md` was created as expected, but the Python scripts ended up in the parent folder under `02_agent_skills` instead of the skill's script directory.
+- Switched to **Opus 4.8** for cleanup with the prompt: *"Update the /mud skill by optimizing its definition, updating the scripts, and moving them into the correct script directory. Read the Claude Skill documentation first if you're unsure how it works."*
+- Opus cleaned up the directory structure quickly — it moved the scripts into the correct directory and updated the `SKILL.md` without unnecessary iterations.
+- Testing the skill with **Haiku 4.5** failed again, even after `/reload-skills` and explicitly invoking the `/mud` skill command. The Coding Harness could not work with the skill properly.
+- Switched to **Sonnet 4.6**. After a few iterations and adjustments to the skill and the Python scripts, the Coding Harness successfully located the bakery and listed the available items.
+- Since the skill quality was still uncertain, the skill was rewritten and extended with two example prompts. The Coding Harness under Sonnet 4.6 solved both prompted tasks successfully.
+- Switched back to **Haiku 4.5** for a final test. With the efficiently set up skill in place, the prompted tasks were executed easily while burning fewer tokens — including a complete combat run in the newbie zone (fighting a drunk at the Grunting Boar Inn: 6 combat rounds, victory with zero damage taken, +149 exp gained).
+
+### Technical Conclusions
+
+Choosing small models without a well-defined skill burned a lot of tokens on not very effective tasks. The Coding Harness with higher models was better and more effective at both creating and executing the skill.
+
+The key finding: a skill needs to be tested and optimized with a higher model first — once the skill definition is solid, lower models can work with it reliably for quick tasks. Skill quality determines model performance more than model size.
+
+> Build and optimize skills with strong models, then run them with small models for cost-efficient execution.
 
