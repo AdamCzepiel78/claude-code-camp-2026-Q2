@@ -1,5 +1,5 @@
 ---
-name: commit-git
+name: git-commit
 description: Stage all changes since the last commit and commit with the given message
 disable-model-invocation: true
 argument-hint: "<commit message>"
