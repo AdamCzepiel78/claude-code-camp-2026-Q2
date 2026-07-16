@@ -65,6 +65,44 @@ Because of this:
 - `--idle` / `--max-wait` -- tune how long the script waits for a reply to
   settle before moving on, if a command produces a lot of scrolling output.
 
+## Playing effectively
+
+Getting connected is only half the job -- how you play once you're in the
+game is what determines whether you make real progress or burn turns
+re-discovering things the server already told you. This is tuned from
+actually testing on this server, not generic MUD advice:
+
+- **Exits are already handed to you.** `dummy` has `autoexits` toggled on,
+  so every `look` and every move already ends with an `Exits: n e s w`
+  style line -- don't spend a separate turn calling `exits` just to see
+  what's around; read the line you already have.
+- **Don't re-read a room you've already seen this session.** `dummy` plays
+  with brief mode off on purpose (room text often hides real gameplay
+  hints -- see `help brief` in-game), so the full description shows every
+  time you enter. That's a deliberate tradeoff for a human player who
+  forgets rooms; you don't forget what's earlier in the transcript, so
+  once you have a room's description, move on instead of calling `look`
+  again out of habit.
+- **`consider <target>` before you fight anything unfamiliar.** It's a
+  free, rough level comparison (no HP/damage info) that costs nothing and
+  can save you from a fight you'd need to `flee`. `flee` only works if
+  there's an open exit, so don't fight with your back against a dead end.
+- **Recover between fights** with `rest` (or `sleep`) then `stand` --
+  faster than walking damage off, and `score` tells you how banged up you
+  are if you're not sure.
+- **Reach for the specific check you need**: `score` (level/exp/alignment/
+  quest points), `inventory`/`i` (what you're carrying), `equipment`/`eq`
+  (what you're wearing) are three different answers -- don't run all three
+  when only one answers the actual question.
+- **Shops need `list` first** to see what's on offer before `buy`/`sell`/
+  `value`. `gold` is cash on hand; `balance`/`deposit`/`withdraw` is the
+  bank.
+
+For anything not covered here -- the full command set, class-specific
+skills, quest mechanics -- see `references/commands.md`, or just run
+`help <command>` in-game, which is authoritative if the server config ever
+changes.
+
 ## Why a script, not ad-hoc telnet/nc
 
 This MUD's login has two quirks that make a naive per-turn script
