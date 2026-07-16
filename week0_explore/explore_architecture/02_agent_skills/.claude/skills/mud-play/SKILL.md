@@ -1,5 +1,5 @@
 ---
-name: mud
+name: mud-play
 description: Connect to and play the tbaMUD (CircleMUD-derived) instance running at localhost:4000 as the character "dummy". Use this whenever the player asks to explore this MUD world, find something or someone in it, talk to NPCs, fight, move around, check score/inventory, or otherwise act as their character in the game. Make sure to use this skill whenever the user mentions "the mud", "the game on port 4000", "my character dummy", or asks you to look around / walk / interact in that world -- even if they don't say "skill" or name the script directly. Do not hand-roll a telnet/nc/socket script for this MUD -- use the script this skill provides; the login sequence has real timing and menu quirks a naive script gets wrong (see "Why a script" below).
 ---
 
@@ -87,6 +87,15 @@ files -- short bullet facts, not prose -- so they stay cheap to re-read
 each session. Stale or wrong entries are worse than missing ones: if
 something you find contradicts what's recorded (a room redescribed, a mob
 that fled), correct it in place rather than leaving both versions.
+
+**Mandatory end-of-turn checkpoint.** Do not send your final reply in any
+turn that ran MUD commands without first checking: has anything happened
+since the last file edit that `player.md` or `world.md` doesn't reflect
+yet (a kill, a level-up, gold/exp change, a new room, a new "too dangerous"
+mob)? If yes, edit the files before replying -- don't defer this to "next
+session" or wait to be asked. Updating only at the very start of a session
+is not enough; the whole point is that the files stay accurate even if the
+session is interrupted mid-exploration.
 
 ## Useful flags
 
