@@ -52,6 +52,42 @@ Because of this:
   round-trips to undo next time. Only pass `--quit` when the player
   actually wants to end the play session.
 
+## Persistent memory -- data/player.md and data/world.md
+
+The character's link-dead persistence (above) covers state *within* the
+game server, but this script's transcript is not kept anywhere -- without
+a written record, every new session re-derives the map and character
+state from scratch by spamming `score`/`inventory`/`look`. Two files carry
+that knowledge forward instead:
+
+- **`data/player.md`** -- the character sheet: level, vitals, exp/gold,
+  known kill-worthy mobs and their `consider` results, inventory/equipment,
+  goals in progress.
+- **`data/world.md`** -- the map: every room discovered so far (name,
+  exits, NPCs, notes), known routes between landmarks (e.g. guild, shops,
+  the Newbie Zone entrance), and an "unexplored leads" list.
+
+**At the start of every session, read both files first**, before issuing
+any MUD commands. They will usually tell you where the character is,
+what's nearby, and the fastest route to wherever the player wants to go --
+use that instead of re-exploring blind or re-running `score`/`look` for
+facts already recorded.
+
+**Update both files as you play**, not just at the end:
+- `player.md` -- whenever HP/mana/movement, exp/gold, level, alignment,
+  inventory/equipment, or position changes meaningfully (a kill, a level-up,
+  a shop transaction, a death, ending the session in a new room).
+- `world.md` -- the moment you see a room that isn't already recorded:
+  its exact name, exits, NPCs, and any notable feature. Add newly learned
+  routes under a "Route:" heading like the existing ones. Move items out
+  of "Unexplored leads" once resolved, and add new ones as they come up.
+
+Keep entries in the same terse, structured style already used in both
+files -- short bullet facts, not prose -- so they stay cheap to re-read
+each session. Stale or wrong entries are worse than missing ones: if
+something you find contradicts what's recorded (a room redescribed, a mob
+that fled), correct it in place rather than leaving both versions.
+
 ## Useful flags
 
 - `--quit` -- after running the given commands, send `quit` (and exit the
@@ -101,7 +137,8 @@ actually testing on this server, not generic MUD advice:
 For anything not covered here -- the full command set, class-specific
 skills, quest mechanics -- see `references/commands.md`, or just run
 `help <command>` in-game, which is authoritative if the server config ever
-changes.
+changes. For where the character already is and what's already been
+mapped, see `data/player.md` and `data/world.md` (previous section).
 
 ## Why a script, not ad-hoc telnet/nc
 
