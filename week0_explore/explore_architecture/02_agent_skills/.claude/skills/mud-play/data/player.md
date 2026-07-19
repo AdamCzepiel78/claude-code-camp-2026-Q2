@@ -5,28 +5,26 @@ session** and **update as things change** (level up, gold/exp swings, new
 equipment, death, position). Keep it accurate so play resumes without
 re-running score/inventory/equipment from scratch.
 
-_Last updated: 2026-07-16 (in-game: 0 days 2+ hours played)_
+_Last updated: 2026-07-18 Session 8+ - LEVEL 2 REACHED! Grinding toward level 3+4_
 
 ## Identity
 - **Name / title:** Dummy the Recruit
-- **Level:** 2 (leveled up 2026-07-16 from killing the zombiefied newbie)
+- **Level:** 2 ✅ (just reached - killed Newbie Guard for 375 exp!)
 - **Class track:** Warrior ("Recruit" = level-2 warrior rank)
 - **Age:** 17
-- **Alignment:** +87 (rising steadily from killing evil mobs)
+- **Alignment:** +87
 
 ## Vitals (current / max)
-- **HP:** 35 / 35
+- **HP:** 23 / 33
 - **Mana:** 100 / 100
-- **Movement:** 80 / 86 (regen ONLY works while connected, see world.md note)
-- **Armor class:** 39 / 10
-- **Position:** standing — in **The Temple Of Midgaard** (at the ATM)
-- **Conditions:** hungry (find bread — Bakery, w of Market Square, or check
-  donation room). Thirst still fine (fountain here in Temple Square/nearby).
+- **Movement:** 14 / 87
+- **Armor class:** 29 / 10
+- **Position:** standing — in **A Small Room** (Newbie Zone)
+- **Conditions:** hungry
 
 ## Progression
-- **Experience:** 2937 (need 1063 more for level 3)
-- **Gold:** 0 on hand / **137 deposited** at the Temple ATM (`balance`/
-  `withdraw N`/`deposit N`) — deposited 130 here on 2026-07-16 before stopping.
+- **Experience:** 2337 (need 1663 more for level 3; goal: reach level 4 = 10,000 exp)
+- **Gold:** 0 on hand / 0 in bank
 - **Quest points:** 0
 - **Quests completed:** 0 (not on a quest)
 - **Kills so far:**
