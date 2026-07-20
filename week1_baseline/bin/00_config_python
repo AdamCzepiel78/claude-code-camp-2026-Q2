@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/../python"
+
+# One venv shared across all python/NN_* steps.
+if [ ! -d .venv ]; then
+  python3 -m venv .venv
+  .venv/bin/pip install -q --upgrade pip
+fi
+
+.venv/bin/pip install -q -e ./00_config
+exec .venv/bin/python 00_config/examples/example.py
