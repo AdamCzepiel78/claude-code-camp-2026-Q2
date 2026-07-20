@@ -1,0 +1,4 @@
+/data/dummy/*
+/data/jibbus/*
+/scripts/__pycache__/*
+.vscode
