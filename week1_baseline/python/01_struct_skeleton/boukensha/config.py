@@ -1,6 +1,6 @@
 """Configuration loading for the Boukensha agent.
 
-Port of ``lib/boukensha/config.rb`` from the Ruby ``00_config`` step.
+Port of ``lib/boukensha/config.rb`` from the Ruby ``01_struct_skeleton`` step.
 """
 
 from __future__ import annotations
@@ -11,9 +11,6 @@ from typing import Any
 
 import yaml
 from dotenv import load_dotenv
-
-# Default prompts shipped alongside this package (``<00_config>/prompts``).
-PROMPTS_DIR: Path = Path(__file__).resolve().parent.parent / "prompts"
 
 # The .boukensha config directory is resolved in this order:
 #   1. BOUKENSHA_DIR environment variable

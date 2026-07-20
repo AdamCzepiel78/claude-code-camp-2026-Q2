@@ -15,4 +15,4 @@ if [ ! -d .venv ]; then
 fi
 
 .venv/bin/pip install -q "python-dotenv>=1.0" "PyYAML>=6.0"
-exec .venv/bin/python 00_config/examples/example.py
+exec .venv/bin/python 01_struct_skeleton/examples/example.py

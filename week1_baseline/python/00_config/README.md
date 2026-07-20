@@ -120,7 +120,7 @@ mud:
   `yaml.safe_load` always produces plain `str` keys in Python, so `Config.dig` and
   `Base._fetch` only need a single string-keyed lookup.
 - **`prompt_override?` → `prompt_override`.** A trailing `?` isn't valid in a Python identifier.
-- **`Config#to_s`/`#inspect` → `Config.__repr__`**, same `<Boukensha.Config dir=... tasks=...>`
+- **`Config#to_s`/`#inspect` → `Config.__repr__`**, same `#<Boukensha.Config dir=... tasks=...>`
   shape.
 - **Ruby's `Boukensha::Tasks::Player` nested-class naming → `boukensha.tasks.player.Player`.**
   The Python module path already does the namespacing; there's no need to also prefix the class
@@ -140,14 +140,20 @@ mud:
 ## Setup
 
 Requires Python ≥ 3.11. One venv lives at `python/.venv`, shared across every `python/NN_*`
-step — each step is installed into it in editable mode, so switching between steps doesn't mean
-juggling (or duplicating) a venv per step.
+step — but only for the third-party runtime deps (`python-dotenv`, `PyYAML`). **No step's own
+`boukensha` package is `pip install`-ed into it.** Every step ships its own top-level `boukensha`
+package (this step's, `01_struct_skeleton`'s, etc.) — `pip install -e`-ing more than one of them
+into the same venv would collide on that shared import name, with whichever was installed last
+silently shadowing the others. Instead, each step's `examples/example.py` adds its own package
+directory to the front of `sys.path` at runtime, mirroring how the Ruby examples
+`require_relative "../lib/boukensha"` from within their own step folder — only one step's code
+is ever "active" per process, exactly like the Ruby side.
 
 ```bash
 cd week1_baseline/python
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e ./00_config
+pip install "python-dotenv>=1.0" "PyYAML>=6.0"
 ```
 
 ## Run example
@@ -156,16 +162,16 @@ pip install -e ./00_config
 ./week1_baseline/bin/00_config_python
 ```
 
-This bootstraps `python/.venv` on first run (creating it and installing `00_config` into it)
+This bootstraps `python/.venv` on first run (creating it and installing the shared runtime deps)
 and is safe to re-run any time. Or, with the shared venv active:
 
 ```bash
 python 00_config/examples/example.py
 ```
 
-`examples/example.py` adds the package directory to `sys.path` itself, so it also runs without
-an editable install — mirroring the Ruby example's `require_relative "../lib/boukensha"` — as
-long as `python-dotenv` and `PyYAML` are importable.
+`examples/example.py` adds this package's directory to `sys.path` itself (see above), so it runs
+standalone as long as `python-dotenv` and `PyYAML` are importable — no install of this package
+required or supported.
 
 Expected output (values from your `.boukensha/`):
 
@@ -186,5 +192,5 @@ MUD user:       dummy
 
 API key set?    true
 
-<Boukensha.Config dir=/home/andrew/Sites/Claude-Code-Camp/.boukensha tasks=player>
+#<Boukensha.Config dir=/home/andrew/Sites/Claude-Code-Camp/.boukensha tasks=player>
 ```
