@@ -34,11 +34,6 @@ module Boukensha
           cost_per_million: { input: 0.0, output: 0.0 },
           usage_unit: :local_compute
         },
-        "gemma3:12b" => {
-          context_window: 256_000,
-          cost_per_million: { input: 0.0, output: 0.0 },
-          usage_unit: :local_compute
-        },
         "gemma4:31b" => {
           context_window: 256_000,
           cost_per_million: { input: 0.0, output: 0.0 },

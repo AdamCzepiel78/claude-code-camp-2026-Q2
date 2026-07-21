@@ -1,7 +1,7 @@
 tasks:
   player:
-    provider: ollama
-    model: gemma3:12b
+    provider: mammouth
+    model: mistral-large-3
     prompt_override:
       system: false
 mud:

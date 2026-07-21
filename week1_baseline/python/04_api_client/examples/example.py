@@ -18,7 +18,7 @@ from pathlib import Path
 # mirroring the Ruby example's `require_relative "../lib/boukensha"`.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from boukensha.backends import Anthropic, Gemini, Ollama, OllamaCloud, OpenAI  # noqa: E402
+from boukensha.backends import Anthropic, Gemini, Mammouth, Ollama, OllamaCloud, OpenAI  # noqa: E402
 from boukensha.backends.base import Base  # noqa: E402
 from boukensha.client import Client  # noqa: E402
 from boukensha.config import PROMPTS_DIR, Config  # noqa: E402
@@ -76,6 +76,8 @@ def main() -> None:
         backend = Ollama(model=model)
     elif provider == "ollama_cloud":
         backend = OllamaCloud(api_key=os.environ["OLLAMA_API_KEY"], model=model)
+    elif provider == "mammouth":
+        backend = Mammouth(api_key=os.environ["MAMMOUTH_API_KEY"], model=model)
     else:
         raise ValueError(f"Unsupported provider for player task: {provider}")
 
