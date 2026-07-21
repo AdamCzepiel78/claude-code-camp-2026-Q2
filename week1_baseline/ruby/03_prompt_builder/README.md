@@ -3,12 +3,13 @@
 Because LLM access, cost and quality are cosntantly changing, we want to be able to switch between multiple LLMs that will drive the agent loop.
 
 There are serveral SDKs that provide access to many LLMs but in practice we only really need to focus on top-tier models:
+
 - anthropic family
 - openai family
 - gemini family
 - ollama cloud eg. kimi, minimax, llama
 
-The Prompt Builder serializes `Context` for the exact format each API expects. 
+The Prompt Builder serializes `Context` for the exact format each API expects.
 The `PromptBuilder` delegates to whichever backend you pass in.
 
 PromptBuilder does not call the API, we are simply preparing the format for API calls.
@@ -19,18 +20,18 @@ context records the task that the prompt is being built for.
 
 ## New Files
 
-| File | Description |
-|---|---|
-| `lib/boukensha/prompt_builder.rb` | Delegates serialization to the active backend |
-| `lib/boukensha/tasks/base.rb` | Abstract task helper for provider/model and prompt resolution |
-| `lib/boukensha/tasks/player.rb` | The concrete player task used by the main loop |
-| `prompts/system.md` | Default system prompt used when a task does not override it |
-| `lib/boukensha/backends/base.rb` | Shared backend contract for model validation and model metadata |
-| `lib/boukensha/backends/anthropic.rb` | Serializes context into the Anthropic API format |
-| `lib/boukensha/backends/ollama.rb` | Serializes context into the Ollama API format |
-| `lib/boukensha/backends/ollama_cloud.rb` | Serializes context into the Ollama Cloud API format |
-| `lib/boukensha/backends/openai.rb` | Serializes context into the OpenAI Chat Completions format |
-| `lib/boukensha/backends/gemini.rb` | Serializes context into the Gemini `generateContent` format |
+| File                                       | Description                                                     |
+| ------------------------------------------ | --------------------------------------------------------------- |
+| `lib/boukensha/prompt_builder.rb`        | Delegates serialization to the active backend                   |
+| `lib/boukensha/tasks/base.rb`            | Abstract task helper for provider/model and prompt resolution   |
+| `lib/boukensha/tasks/player.rb`          | The concrete player task used by the main loop                  |
+| `prompts/system.md`                      | Default system prompt used when a task does not override it     |
+| `lib/boukensha/backends/base.rb`         | Shared backend contract for model validation and model metadata |
+| `lib/boukensha/backends/anthropic.rb`    | Serializes context into the Anthropic API format                |
+| `lib/boukensha/backends/ollama.rb`       | Serializes context into the Ollama API format                   |
+| `lib/boukensha/backends/ollama_cloud.rb` | Serializes context into the Ollama Cloud API format             |
+| `lib/boukensha/backends/openai.rb`       | Serializes context into the OpenAI Chat Completions format      |
+| `lib/boukensha/backends/gemini.rb`       | Serializes context into the Gemini`generateContent` format    |
 
 ## How It Works
 
@@ -48,13 +49,13 @@ POST to API
 
 ## Boukensha::PromptBuilder
 
-| Method | Description |
-|---|---|
-| `to_messages` | Delegates message serialization to the backend |
-| `to_tools` | Delegates tool serialization to the backend |
-| `to_api_payload` | Assembles the complete payload ready to POST |
-| `headers` | Returns the correct headers for the backend |
-| `url` | Returns the correct endpoint URL for the backend |
+| Method             | Description                                      |
+| ------------------ | ------------------------------------------------ |
+| `to_messages`    | Delegates message serialization to the backend   |
+| `to_tools`       | Delegates tool serialization to the backend      |
+| `to_api_payload` | Assembles the complete payload ready to POST     |
+| `headers`        | Returns the correct headers for the backend      |
+| `url`            | Returns the correct endpoint URL for the backend |
 
 ## Backends
 
@@ -64,13 +65,13 @@ Backends also own their supported model table. A backend refuses to initialize
 with an unknown model, so `settings.yaml` cannot silently select an unsupported
 or misspelled model. Each model entry carries:
 
-| Key | Meaning |
-|---|---|
-| `context_window` | The model's known token context window |
-| `cost_per_million.input` | USD input token price per million tokens, when known |
-| `cost_per_million.output` | USD output token price per million tokens, when known |
-| `usage_unit` | `:tokens`, `:local_compute`, or `:ollama_cloud_usage` |
-| `usage_level` | Ollama Cloud usage tier, when applicable |
+| Key                         | Meaning                                                     |
+| --------------------------- | ----------------------------------------------------------- |
+| `context_window`          | The model's known token context window                      |
+| `cost_per_million.input`  | USD input token price per million tokens, when known        |
+| `cost_per_million.output` | USD output token price per million tokens, when known       |
+| `usage_unit`              | `:tokens`, `:local_compute`, or `:ollama_cloud_usage` |
+| `usage_level`             | Ollama Cloud usage tier, when applicable                    |
 
 Backend instances expose `context_window`, `input_token_cost_per_million`,
 `output_token_cost_per_million`, `usage_unit`, `usage_level`, and
@@ -84,13 +85,13 @@ and should be reviewed whenever the selected model set changes.
 
 ### Boukensha::Backends::Anthropic
 
-Talks to `https://api.anthropic.com/v1/messages`. 
+Talks to `https://api.anthropic.com/v1/messages`.
 Requires an `ANTHROPIC_API_KEY`. Supported models are listed in
 `Boukensha::Backends::Anthropic::MODELS`.
 
 ### Boukensha::Backends::Ollama
 
-Talks to `http://localhost:11434/api/chat`. 
+Talks to `http://localhost:11434/api/chat`.
 Requires `ollama serve` running locally. No API key needed. Supported models are
 listed in `Boukensha::Backends::Ollama::MODELS`.
 
@@ -101,7 +102,7 @@ models are listed in `Boukensha::Backends::OllamaCloud::MODELS`.
 
 ### Boukensha::Backends::OpenAI
 
-Talks to `https://api.openai.com/v1/chat/completions`. 
+Talks to `https://api.openai.com/v1/chat/completions`.
 Requires an `OPENAI_API_KEY`. Supported models are listed in
 `Boukensha::Backends::OpenAI::MODELS`.
 
@@ -179,8 +180,14 @@ Anthropic, Ollama, and OpenAI all use `assistant` for the model's turn. Gemini c
 
 **The agent only sees schemas.** The `description` field on each tool is the only thing the agent uses to decide which tool to call. The actual block never leaves BOUKENSHA.
 
+We now register tools with the Registry but our code still has direct registration and tools in context. The likely should have been reworked.
+
+Checking the finale baseline example, we did not correct the issue. The context should have reference to tools[] its currently usingm and the full table of tools registered should live on the Registry.
+
+We'll correct this manually in a future step, and we will leave things place.
+
 ## Run Example
 
 ```sh
-./week1_baseline/bin/03_prompt_builder 
+./week1_baseline/bin/03_prompt_builder
 ```
