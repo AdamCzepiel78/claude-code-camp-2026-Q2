@@ -2,24 +2,22 @@
 
 The API Client takes the payload assembled by `PromptBuilder` and sends it to the API. One HTTP POST, one response. No tool loop yet — just proving the round trip works.
 
-
-
 ## New Files
 
-| File | Description |
-|---|---|
-| `lib/boukensha/client.rb` | Makes the HTTP request and parses the response |
-| `lib/boukensha/backends/base.rb` | Shared backend model validation and model metadata helpers |
-| `lib/boukensha/tasks/base.rb` | Shared task configuration helpers for provider, model, and prompts |
-| `lib/boukensha/tasks/player.rb` | Player task definition |
-| `prompts/system.md` | Default system prompt used when the player task does not override it |
+| File                               | Description                                                          |
+| ---------------------------------- | -------------------------------------------------------------------- |
+| `lib/boukensha/client.rb`        | Makes the HTTP request and parses the response                       |
+| `lib/boukensha/backends/base.rb` | Shared backend model validation and model metadata helpers           |
+| `lib/boukensha/tasks/base.rb`    | Shared task configuration helpers for provider, model, and prompts   |
+| `lib/boukensha/tasks/player.rb`  | Player task definition                                               |
+| `prompts/system.md`              | Default system prompt used when the player task does not override it |
 
 ## Updated Files
 
-| File | Change |
-|---|---|
-| `lib/boukensha/errors.rb` | Added `ApiError` for failed HTTP requests |
-| `lib/boukensha/config.rb` | Reads `tasks.player` instead of top-level provider/model settings |
+| File                            | Change                                                                         |
+| ------------------------------- | ------------------------------------------------------------------------------ |
+| `lib/boukensha/errors.rb`     | Added`ApiError` for failed HTTP requests                                     |
+| `lib/boukensha/config.rb`     | Reads`tasks.player` instead of top-level provider/model settings             |
 | `lib/boukensha/backends/*.rb` | Backends now own supported model tables with context windows and cost metadata |
 
 ## How It Works
@@ -36,8 +34,8 @@ Raw JSON response
 
 ## Boukensha::Client
 
-| Method | Description |
-|---|---|
+| Method                       | Description                                            |
+| ---------------------------- | ------------------------------------------------------ |
 | `call(max_output_tokens:)` | POSTs the payload and returns the parsed JSON response |
 
 ## Task Configuration
@@ -67,6 +65,7 @@ Each backend validates the configured model at construction time. Unsupported mo
 The raw response shape differs between backends. This is what you get back from `client.call` before any processing:
 
 ### Anthropic
+
 ```json
 {
   "id": "msg_01XY",
@@ -81,6 +80,7 @@ The raw response shape differs between backends. This is what you get back from 
 ```
 
 ### Ollama
+
 ```json
 {
   "model": "llama3.2",
@@ -97,7 +97,7 @@ When the model wants to call a tool the response looks different. Anthropic uses
 
 ## Output eaxmple
 
-andrew ~/Sites/Claude-Code-Camp/iterations  $ ruby 03_api_client/examples/step3.rb                              
+andrew ~/Sites/Claude-Code-Camp/iterations  $ ruby 03_api_client/examples/step3.rb
 === BOUKENSHA Step 4: API Client ===
 
 Sending request to https://api.anthropic.com/v1/messages...
@@ -117,7 +117,7 @@ Raw response:
 
 To keep things explainable and simpel we are using net/http.
 Net HTTP has rough edges like supplying the correct SSL certificate
-from your machine. 
+from your machine.
 
 HTTPParty can solve this but we are trying to avoid any libraries.
 
@@ -125,8 +125,17 @@ You will need to update the code based on your machines requirements.
 
 ruby -e "require 'openssl'; puts OpenSSL::X509::DEFAULT_CERT_FILE"
 
+## Review Considerations
+
+- In the ollama.rb backend we harcoded the local address this should have been a env
+var that could default to the default ollama path, but we are going to keep it harcoded
+to avoid having to uplift all layers of our code.
+- It looks like some generated code did not adhere to the stateless classes, there is
+some code that should be stateless eg. Client but we will keep it the same for now.
+
+
 ## Run Example
 
 ```sh
-./week1_baseline/bin/04_api_client 
+./week1_baseline/bin/04_api_client
 ```
