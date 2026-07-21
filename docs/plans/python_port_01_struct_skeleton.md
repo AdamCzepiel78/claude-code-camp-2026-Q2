@@ -150,4 +150,4 @@ No `prompts/` directory in this step (see above).
    naming already in the repo — installing only shared deps into `python/.venv` per Q1's resolution.
 9. If Q1 is resolved in favor of dropping per-step editable installs, retrofit
    `bin/00_config_python` (and its README) to match.
-10. create executable bash script `01_struct_skeleton_python`in folder week1_baseline/bin
+10. create executable bash script `01_struct_skeleton_python`in folder week1_baseline/bin to execute example.py
