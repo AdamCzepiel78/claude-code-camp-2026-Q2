@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+
+cd "$(dirname "$0")/../ruby/07_the_run_dsl" || exit 1
+bundle exec ruby examples/example.rb
