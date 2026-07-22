@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+
+cd "$(dirname "$0")/../ruby/08_the_repl_loop" || exit 1
+bundle exec ruby examples/example.rb
