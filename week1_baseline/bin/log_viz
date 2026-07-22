@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+#
+# Start the BOUKENSHA log viewer (Sinatra + WEBrick) in the background.
+#
+# Serves the JSONL session logs written by the agent steps. Usage:
+#   bin/log_viz [start|stop|status|restart]   (default: start)
+#
+# Env overrides: PORT (4567), BIND (localhost), LOG_VIZ_SESSIONS_DIR.
+set -euo pipefail
+
+HERE="$(cd "$(dirname "$0")" && pwd)"     # week1_baseline/bin
+BASE="$(cd "$HERE/.." && pwd)"            # week1_baseline
+APP="$BASE/log_viz"                       # the copied Sinatra app
+
+PORT="${PORT:-4567}"
+BIND="${BIND:-localhost}"
+PIDFILE="$APP/.log_viz.pid"
+LOGFILE="$APP/log_viz.log"
+
+# The copy lives one level shallower than ruby/log_viz, so the app's relative
+# default sessions path would overshoot. Pin it explicitly (still overridable).
+export LOG_VIZ_SESSIONS_DIR="${LOG_VIZ_SESSIONS_DIR:-$BASE/.boukensha/sessions}"
+
+url="http://$BIND:$PORT"
+
+is_running() {
+  [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE" 2>/dev/null)" 2>/dev/null
+}
+
+start() {
+  if is_running; then
+    echo "log_viz is already running (PID $(cat "$PIDFILE")) → $url"
+    return 0
+  fi
+  rm -f "$PIDFILE"
+
+  cd "$APP"
+  # Ensure gems are present (idempotent; only installs when missing).
+  if ! bundle check >/dev/null 2>&1; then
+    echo "Installing gems…"
+    bundle install
+  fi
+
+  # Launch detached, capturing output to a log file.
+  PORT="$PORT" BIND="$BIND" nohup bundle exec ruby bin/log_viz >"$LOGFILE" 2>&1 &
+  local pid=$!
+  echo "$pid" > "$PIDFILE"
+
+  # Give it a moment and confirm it stayed up.
+  for _ in 1 2 3 4 5 6 7 8 9 10; do
+    if ! kill -0 "$pid" 2>/dev/null; then
+      echo "log_viz failed to start — see $LOGFILE:" >&2
+      tail -n 15 "$LOGFILE" >&2 || true
+      rm -f "$PIDFILE"
+      exit 1
+    fi
+    if curl -s -o /dev/null -m 1 "$url/" 2>/dev/null; then
+      break
+    fi
+    sleep 1
+  done
+
+  echo "log_viz started (PID $pid) → $url"
+  echo "  sessions: $LOG_VIZ_SESSIONS_DIR"
+  echo "  log:      $LOGFILE"
+  echo "  stop:     $0 stop"
+}
+
+stop() {
+  if ! is_running; then
+    echo "log_viz is not running."
+    rm -f "$PIDFILE"
+    return 0
+  fi
+  local pid
+  pid="$(cat "$PIDFILE")"
+  kill "$pid" 2>/dev/null || true
+  for _ in 1 2 3 4 5; do
+    kill -0 "$pid" 2>/dev/null || break
+    sleep 1
+  done
+  kill -9 "$pid" 2>/dev/null || true
+  rm -f "$PIDFILE"
+  echo "log_viz stopped (was PID $pid)."
+}
+
+status() {
+  if is_running; then
+    echo "log_viz is running (PID $(cat "$PIDFILE")) → $url"
+  else
+    echo "log_viz is not running."
+  fi
+}
+
+case "${1:-start}" in
+  start)   start ;;
+  stop)    stop ;;
+  restart) stop; start ;;
+  status)  status ;;
+  *) echo "usage: $0 [start|stop|status|restart]" >&2; exit 2 ;;
+esac

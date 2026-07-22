@@ -1,0 +1,11 @@
+[2026-07-22 06:16:30] INFO  WEBrick 1.9.2
+[2026-07-22 06:16:30] INFO  ruby 4.0.6 (2026-07-14) [x86_64-linux]
+== Sinatra (v4.2.1) has taken the stage on 4571 for development with backup from WEBrick
+[2026-07-22 06:16:30] INFO  Rackup::Handler::WEBrick::Server#start: pid=133545 port=4571
+127.0.0.1 - - [22/Jul/2026:06:16:31 CEST] "GET / HTTP/1.1" 200 7848
+- -> /
+127.0.0.1 - - [22/Jul/2026:06:16:31 CEST] "GET / HTTP/1.1" 200 7848
+- -> /
+== Sinatra has ended his set (crowd applauds)
+[2026-07-22 06:16:31] INFO  going to shutdown ...
+[2026-07-22 06:16:31] INFO  Rackup::Handler::WEBrick::Server#start done.

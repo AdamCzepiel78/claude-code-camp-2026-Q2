@@ -1,0 +1,7 @@
+source "https://rubygems.org"
+
+gem "sinatra"
+gem "rackup"
+# webrick (pure Ruby) instead of puma: puma's nio4r native extension can't link
+# against this Homebrew Ruby (built for glibc 2.38) on the system's glibc 2.35.
+gem "webrick"
