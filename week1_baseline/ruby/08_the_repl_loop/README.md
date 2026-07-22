@@ -2,12 +2,12 @@
 
 ## What this step adds
 
-| | Step 6 | Step 7 |
-|---|---|---|
-| Entry point | `Boukensha.run(task: "…")` | `Boukensha.repl` |
-| Turns | one | many |
-| History | discarded | accumulates across turns |
-| User interaction | none | stdin prompt |
+|                  | Step 6                        | Step 7                   |
+| ---------------- | ----------------------------- | ------------------------ |
+| Entry point      | `Boukensha.run(task: "…")` | `Boukensha.repl`       |
+| Turns            | one                           | many                     |
+| History          | discarded                     | accumulates across turns |
+| User interaction | none                          | stdin prompt             |
 
 ## New primitives
 
@@ -15,15 +15,15 @@
 
 The interactive session loop. Built-in commands:
 
-| Command | Effect |
-|---|---|
-| `/quiet` | Suppress logging output |
-| `/loud` | Re-enable logging output |
-| `/clear` | Wipe conversation history (tools stay registered) |
-| `/help` | Print the command list |
-| `/exit` / `/quit` | Leave the REPL |
-| Ctrl-D | EOF — leave the REPL |
-| Ctrl-C | Interrupt — leave the REPL gracefully |
+| Command               | Effect                                            |
+| --------------------- | ------------------------------------------------- |
+| `/quiet`            | Suppress logging output                           |
+| `/loud`             | Re-enable logging output                          |
+| `/clear`            | Wipe conversation history (tools stay registered) |
+| `/help`             | Print the command list                            |
+| `/exit` / `/quit` | Leave the REPL                                    |
+| Ctrl-D                | EOF — leave the REPL                             |
+| Ctrl-C                | Interrupt — leave the REPL gracefully            |
 
 ### `Boukensha.repl`
 
@@ -43,9 +43,11 @@ end
 ## Changes from step 6
 
 ### `Context#clear_messages!`
+
 Wipes `@messages` while keeping tools registered. Used by the REPL `/clear` command.
 
 ### `Agent#run` — persists the final reply
+
 Before step 7, the agent returned the final text without adding it to the
 context. That was fine for one-shot runs (context is thrown away anyway), but
 a REPL needs the full transcript so subsequent turns see the prior exchange.
@@ -60,6 +62,7 @@ return text
 ```
 
 ### `Logger#turn`
+
 New method that prints a `╔══ turn N ══╗` header at the start of each REPL
 turn, making it easy to see where one conversation turn ends and the next
 begins.

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# The gem ships no dependencies (net/http + json are stdlib), so skip bundler.
+# bin/boukensha already unshifts lib/ onto $LOAD_PATH.
+cd "$(dirname "$0")/../ruby/09_global_executable" || exit 1
+exec ruby bin/boukensha
