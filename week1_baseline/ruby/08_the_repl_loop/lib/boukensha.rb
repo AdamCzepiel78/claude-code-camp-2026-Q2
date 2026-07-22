@@ -54,6 +54,7 @@ module Boukensha
                 when :anthropic    then ENV["ANTHROPIC_API_KEY"]
                 when :openai       then ENV["OPENAI_API_KEY"]
                 when :gemini       then ENV["GEMINI_API_KEY"]
+                when :mammouth     then ENV["MAMMOUTH_API_KEY"]
                 when :ollama_cloud then ENV["OLLAMA_API_KEY"]
                 end
 
@@ -66,9 +67,10 @@ module Boukensha
          when :anthropic    then Backends::Anthropic.new(api_key: api_key, model: model)
          when :openai       then Backends::OpenAI.new(api_key: api_key, model: model)
          when :gemini       then Backends::Gemini.new(api_key: api_key, model: model)
+         when :mammouth     then Backends::Mammouth.new(api_key: api_key, model: model)
          when :ollama       then Backends::Ollama.new(host: ollama_host, model: model)
          when :ollama_cloud then Backends::OllamaCloud.new(api_key: api_key, model: model)
-         else raise ArgumentError, "Unknown backend #{backend.inspect}. Use :anthropic, :openai, :gemini, :ollama, or :ollama_cloud."
+         else raise ArgumentError, "Unknown backend #{backend.inspect}. Use :anthropic, :openai, :gemini, :mammouth, :ollama, or :ollama_cloud."
          end
 
     builder = PromptBuilder.new(ctx, be)
@@ -119,6 +121,7 @@ module Boukensha
                 when :anthropic    then ENV["ANTHROPIC_API_KEY"]
                 when :openai       then ENV["OPENAI_API_KEY"]
                 when :gemini       then ENV["GEMINI_API_KEY"]
+                when :mammouth     then ENV["MAMMOUTH_API_KEY"]
                 when :ollama_cloud then ENV["OLLAMA_API_KEY"]
                 end
 
@@ -131,9 +134,10 @@ module Boukensha
          when :anthropic    then Backends::Anthropic.new(api_key: api_key, model: model)
          when :openai       then Backends::OpenAI.new(api_key: api_key, model: model)
          when :gemini       then Backends::Gemini.new(api_key: api_key, model: model)
+         when :mammouth     then Backends::Mammouth.new(api_key: api_key, model: model)
          when :ollama       then Backends::Ollama.new(host: ollama_host, model: model)
          when :ollama_cloud then Backends::OllamaCloud.new(api_key: api_key, model: model)
-         else raise ArgumentError, "Unknown backend #{backend.inspect}. Use :anthropic, :openai, :gemini, :ollama, or :ollama_cloud."
+         else raise ArgumentError, "Unknown backend #{backend.inspect}. Use :anthropic, :openai, :gemini, :mammouth, :ollama, or :ollama_cloud."
          end
 
     builder = PromptBuilder.new(ctx, be)
@@ -180,6 +184,7 @@ require_relative "boukensha/logger"
 require_relative "boukensha/backends/base"
 require_relative "boukensha/backends/anthropic"
 require_relative "boukensha/backends/gemini"
+require_relative "boukensha/backends/mammouth"
 require_relative "boukensha/backends/ollama"
 require_relative "boukensha/backends/ollama_cloud"
 require_relative "boukensha/backends/openai"

@@ -81,6 +81,8 @@ class Ollama(Base):
                 conversation.append(
                     {"role": "tool", "tool_name": msg.tool_use_id, "content": msg.content}
                 )
+            elif msg.role == "assistant":
+                conversation.append(self._assistant_message(msg.content))
             else:
                 conversation.append({"role": msg.role, "content": msg.content})
         return system_message + conversation
@@ -102,12 +104,48 @@ class Ollama(Base):
             for tool in tools.values()
         ]
 
-    def to_payload(self, context: Any, *, max_output_tokens: int = 1024) -> dict[str, Any]:
+    def to_payload(
+        self,
+        context: Any,
+        *,
+        max_output_tokens: int = 1024,
+        tools: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
         return {
             "model": self.model,
             "stream": False,
             "messages": self.to_messages(context.system, context.messages),
-            "tools": self.to_tools(context.tools),
+            "tools": self.to_tools(context.tools) if tools is None else tools,
+        }
+
+    # Normalizes an Ollama /api/chat response into the common shape:
+    #   {stop_reason: "tool_use" | "end_turn", content: [ {"type": "text", "text": ...} |
+    #    {"type": "tool_use", "id": ..., "name": ..., "input": ...} ]}
+    #
+    # Ollama doesn't assign call ids, so the function name is reused as the id
+    # (Ollama also matches tool results back to a call by name).
+    def parse_response(self, response: dict[str, Any]) -> dict[str, Any]:
+        message = response.get("message") or {}
+        tool_calls = message.get("tool_calls") or []
+
+        content: list[dict[str, Any]] = []
+        if message.get("content"):
+            content.append({"type": "text", "text": message["content"]})
+
+        for tc in tool_calls:
+            function = tc.get("function") or {}
+            content.append(
+                {
+                    "type": "tool_use",
+                    "id": function.get("name"),
+                    "name": function.get("name"),
+                    "input": function.get("arguments") or {},
+                }
+            )
+
+        return {
+            "stop_reason": "end_turn" if not tool_calls else "tool_use",
+            "content": content,
         }
 
     def headers(self) -> dict[str, str]:
@@ -115,3 +153,24 @@ class Ollama(Base):
 
     def url(self) -> str:
         return f"{self._host}/api/chat"
+
+    # ---------- internals ----------------------------------------------------
+
+    # Rebuilds an Ollama assistant message from normalized content blocks
+    # (the inverse of parse_response).
+    @staticmethod
+    def _assistant_message(content: str | list[dict[str, Any]]) -> dict[str, Any]:
+        blocks = [{"type": "text", "text": content}] if isinstance(content, str) else content
+
+        text_blocks = [b for b in blocks if b["type"] == "text"]
+        tool_blocks = [b for b in blocks if b["type"] == "tool_use"]
+
+        message: dict[str, Any] = {
+            "role": "assistant",
+            "content": "".join(b["text"] for b in text_blocks),
+        }
+        if tool_blocks:
+            message["tool_calls"] = [
+                {"function": {"name": b["name"], "arguments": b["input"]}} for b in tool_blocks
+            ]
+        return message

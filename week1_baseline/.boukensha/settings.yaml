@@ -1,7 +1,7 @@
 tasks:
   player:
-    provider: mammouth
-    model: mistral-large-3
+    provider: ollama
+    model: gpt-oss:20b
     prompt_override:
       system: false
 mud:

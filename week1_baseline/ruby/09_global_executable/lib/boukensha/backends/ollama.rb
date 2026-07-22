@@ -4,6 +4,16 @@ module Boukensha
   module Backends
     class Ollama < Base
       MODELS = {
+        "gemma3:12b" => {
+          context_window: 128_000,
+          cost_per_million: { input: 0.0, output: 0.0 },
+          usage_unit: :local_compute
+        },
+        "gpt-oss:20b" => {
+          context_window: 128_000,
+          cost_per_million: { input: 0.0, output: 0.0 },
+          usage_unit: :local_compute
+        },
         "gemma4" => {
           context_window: 128_000,
           cost_per_million: { input: 0.0, output: 0.0 },

@@ -43,6 +43,11 @@ when "ollama_cloud"
     api_key: ENV.fetch("OLLAMA_API_KEY"),
     model:   model
   )
+when "mammouth"
+  Boukensha::Backends::Mammouth.new(
+    api_key: ENV.fetch("MAMMOUTH_API_KEY"),
+    model:   model
+  )
 else
   raise ArgumentError, "Unsupported provider for player task: #{provider}"
 end
