@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/../python"
+
+# One venv shared across all python/NN_* steps. Only third-party runtime
+# deps are installed into it — each step's own `boukensha` package is never
+# `pip install`-ed (every step ships its own `boukensha` top-level package,
+# so installing more than one into the same venv would collide on that
+# import name). Each step loads its own code via sys.path insertion instead
+# (bin/boukensha + boukensha_loader), mirroring Ruby's per-step require.
+#
+# `mud_manager` needs no entry here — it's vendored at python/mud_manager/
+# (stdlib-only: socket + threading), not pip-installed.
+if [ ! -d .venv ]; then
+  python3 -m venv .venv
+  .venv/bin/pip install -q --upgrade pip
+fi
+
+.venv/bin/pip install -q "python-dotenv>=1.0" "PyYAML>=6.0"
+exec .venv/bin/python 10_standard_tool_library/bin/boukensha

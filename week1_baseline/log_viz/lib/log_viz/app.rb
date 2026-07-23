@@ -7,8 +7,10 @@ require_relative "ansi"
 module LogViz
   class App < Sinatra::Base
     set :root, File.expand_path("../..", __dir__)
+    # Matches boukensha's own default config dir (~/.boukensha) — every step
+    # launcher writes session logs there unless BOUKENSHA_DIR is overridden.
     set :sessions_dir, ENV.fetch("LOG_VIZ_SESSIONS_DIR") {
-      File.expand_path("../../../../.boukensha/sessions", __dir__)
+      File.expand_path("~/.boukensha/sessions")
     }
 
     helpers do

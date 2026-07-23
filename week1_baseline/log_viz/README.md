@@ -32,7 +32,7 @@ Then open [http://localhost:4567](http://localhost:4567).
 
 | Env var                  | Default                             | Purpose                                     |
 | ------------------------ | ----------------------------------- | ------------------------------------------- |
-| `LOG_VIZ_SESSIONS_DIR` | `<repo root>/.boukensha/sessions` | Directory of`.jsonl` session logs to read |
+| `LOG_VIZ_SESSIONS_DIR` | `~/.boukensha/sessions` | Directory of`.jsonl` session logs to read |
 | `PORT`                 | `4567`                            | Port to listen on                           |
 | `BIND`                 | `localhost`                       | Address to bind to                          |
 

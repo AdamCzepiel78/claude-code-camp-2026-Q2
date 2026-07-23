@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# mud_manager is pure stdlib (socket + threading) — no venv/pip install
+# needed, unlike the boukensha_python launchers.
+cd "$(dirname "$0")/../python"
+exec python3 mud_manager/examples/simple.py

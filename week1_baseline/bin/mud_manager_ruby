@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# mud_manager is pure stdlib (socket + thread) and the example loads it via
+# require_relative, so no `gem install`/bundler is needed here (unlike the
+# boukensha steps, which depend on mud_manager as a real gem dependency).
+cd "$(dirname "$0")/../../week0_explore/mud_manager"
+exec ruby examples/simple.rb

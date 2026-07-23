@@ -17,9 +17,11 @@ BIND="${BIND:-localhost}"
 PIDFILE="$APP/.log_viz.pid"
 LOGFILE="$APP/log_viz.log"
 
-# The copy lives one level shallower than ruby/log_viz, so the app's relative
-# default sessions path would overshoot. Pin it explicitly (still overridable).
-export LOG_VIZ_SESSIONS_DIR="${LOG_VIZ_SESSIONS_DIR:-$BASE/.boukensha/sessions}"
+# Every step launcher (bin/NN_*_ruby / bin/NN_*_python) writes session logs
+# via boukensha's own default config dir (~/.boukensha — none of them set
+# BOUKENSHA_DIR), so that's where the logs actually are. Pin it explicitly
+# to match (still overridable).
+export LOG_VIZ_SESSIONS_DIR="${LOG_VIZ_SESSIONS_DIR:-$HOME/.boukensha/sessions}"
 
 url="http://$BIND:$PORT"
 

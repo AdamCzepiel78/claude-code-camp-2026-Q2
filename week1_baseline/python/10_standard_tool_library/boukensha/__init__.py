@@ -1,0 +1,376 @@
+"""Boukensha — Step 10: A Standard Tool Library.
+
+Port of ``lib/boukensha.rb``. Besides re-exporting the public classes and holding
+process-wide state (a memoized ``config()`` singleton and ``quiet`` / ``debug``
+flags), this module provides two top-level entry points: :func:`run` (one-shot,
+Ruby's ``Boukensha.run``) and :func:`repl` (interactive multi-turn loop, Ruby's
+``Boukensha.repl``).
+
+This step gives the agent a standard library of tools out of the box instead of
+requiring manual registration:
+
+- ``working_dir``: roots all tool calls to this directory (default: ``Path.cwd()``).
+  Registers ``boukensha.tools.FileSystem`` (pwd, list_directory, read_file,
+  write_file, delete_file, search_files) and ``boukensha.tools.Shell``
+  (run_command) automatically. Pass ``working_dir=False`` to opt out entirely.
+- ``allowed_commands``: list of shell-executable names the agent may run via
+  ``run_command`` (e.g. ``["python", "git"]``). ``None`` (default) permits
+  everything. Pass ``[]`` to disable ``run_command`` entirely.
+- ``shell_timeout``: seconds before a ``run_command`` call is killed (default 30).
+- ``mud``: dict of MUD connection options — registers all MUD gameplay tools and
+  keeps a single session alive across every tool call. When ``None`` (default),
+  ``config().mud_*`` values are used if ``mud_host``/``mud_username`` are set in
+  ``settings.yaml``. Pass ``mud=False`` to disable entirely.
+"""
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+from typing import Any, Callable
+
+from boukensha import tools as Tools
+from boukensha.agent import Agent
+from boukensha.backends import Anthropic, Gemini, Mammouth, Ollama, OllamaCloud, OpenAI
+from boukensha.backends.base import Base
+from boukensha.client import Client
+from boukensha.config import PROMPTS_DIR, Config
+from boukensha.context import Context
+from boukensha.errors import ApiError, LoopError, UnknownToolError, UnsupportedModelError
+from boukensha.logger import Logger
+from boukensha.message import Message
+from boukensha.prompt_builder import PromptBuilder
+from boukensha.registry import Registry
+from boukensha.repl import Repl
+from boukensha.run_dsl import RunDSL
+from boukensha.tasks.player import Player
+from boukensha.tool import Tool
+from boukensha.version import VERSION
+
+_config: Config | None = None
+_quiet: bool = False
+_debug: bool = False
+
+# Which env var holds the API key for each backend (Ollama needs none).
+_API_KEY_ENV: dict[str, str] = {
+    "anthropic": "ANTHROPIC_API_KEY",
+    "openai": "OPENAI_API_KEY",
+    "gemini": "GEMINI_API_KEY",
+    "mammouth": "MAMMOUTH_API_KEY",
+    "ollama_cloud": "OLLAMA_API_KEY",
+}
+
+
+def config() -> Config:
+    """Memoized process-wide :class:`Config` (Ruby's ``Boukensha.config``)."""
+    global _config
+    if _config is None:
+        _config = Config()
+    return _config
+
+
+def set_quiet(value: bool = True) -> None:
+    global _quiet
+    _quiet = value
+
+
+def quiet() -> bool:
+    return _quiet
+
+
+def set_debug(value: bool = True) -> None:
+    global _debug
+    _debug = value
+
+
+def debug() -> bool:
+    return _debug
+
+
+def run(
+    *,
+    task: str,
+    system: str | None = None,
+    model: str | None = None,
+    backend: str | None = None,
+    api_key: str | None = None,
+    ollama_host: str = "http://localhost:11434",
+    log: Path | str | None = None,
+    max_output_tokens: int | None = None,
+    setup: Callable[[RunDSL], None] | None = None,
+    working_dir: str | Path | bool = True,
+    allowed_commands: list[str] | None = None,
+    shell_timeout: int = 30,
+    mud: dict[str, Any] | bool | None = None,
+) -> str:
+    """The top-level entry point (Ruby's ``Boukensha.run``).
+
+    Wires together every primitive so the caller only describes *what* to do.
+    Tools are declared in the ``setup`` callback, which receives a
+    :class:`~boukensha.run_dsl.RunDSL`::
+
+        def setup(t):
+            @t.tool("read_file", description="...", parameters={"path": {...}})
+            def read_file(path: str) -> str:
+                ...
+
+        result = boukensha.run(task="...", setup=setup)
+
+    Options mirror the Ruby source; unset values fall back to the ``player``
+    task settings in ``.boukensha/settings.yaml``. See the module docstring for
+    ``working_dir``/``allowed_commands``/``shell_timeout``/``mud``.
+    """
+    cfg = config()  # loads .env; populates os.environ
+    task_class = Player
+    task_settings = cfg.tasks(task_class.task_name())
+
+    if system is None:
+        system = task_class.system_prompt(
+            task_settings,
+            user_prompts_dir=cfg.user_prompts_dir,
+            default_prompts_dir=PROMPTS_DIR,
+        )
+    if model is None:
+        model = task_class.model(task_settings)
+    if backend is None:
+        backend = task_class.provider(task_settings)
+    if api_key is None and backend in _API_KEY_ENV:
+        api_key = os.environ.get(_API_KEY_ENV[backend])
+
+    resolved_working_dir = _resolve_working_dir(working_dir)
+    ctx = Context(task=task_class, system=system, working_dir=resolved_working_dir)
+    registry = Registry(ctx)
+
+    if setup is not None:
+        setup(RunDSL(registry))
+
+    if resolved_working_dir is not None:
+        Tools.FileSystem.register(registry, working_dir=resolved_working_dir)
+        Tools.Shell.register(
+            registry, working_dir=resolved_working_dir, timeout=shell_timeout,
+            allowed_commands=allowed_commands,
+        )
+
+    # mud=None means "use config if host is set"; mud=False means "skip entirely"
+    resolved_mud = _resolve_mud(mud, cfg)
+    if resolved_mud is not None:
+        Tools.Mud.register(registry, **resolved_mud)
+
+    be = _build_backend(backend, model=model, api_key=api_key, ollama_host=ollama_host)
+
+    builder = PromptBuilder(ctx, be)
+    client = Client(builder)
+    effective_max_iterations = task_class.max_iterations(task_settings)
+    effective_max_output_tokens = (
+        max_output_tokens
+        if max_output_tokens is not None
+        else task_class.max_output_tokens(task_settings)
+    )
+    logger = Logger(
+        log=log,
+        snapshot={
+            "task": task_class.task_name(),
+            "max_iterations": effective_max_iterations,
+            "max_output_tokens": effective_max_output_tokens,
+            "model": model,
+            "provider": backend,
+        },
+    )
+    agent = Agent(
+        context=ctx,
+        registry=registry,
+        builder=builder,
+        client=client,
+        logger=logger,
+        task_settings=task_settings,
+        max_iterations=effective_max_iterations,
+        max_output_tokens=effective_max_output_tokens,
+    )
+
+    ctx.add_message("user", task)
+    try:
+        return agent.run()
+    finally:
+        logger.close()
+
+
+def repl(
+    *,
+    system: str | None = None,
+    model: str | None = None,
+    backend: str | None = None,
+    api_key: str | None = None,
+    ollama_host: str = "http://localhost:11434",
+    log: Path | str | None = None,
+    max_output_tokens: int | None = None,
+    setup: Callable[[RunDSL], None] | None = None,
+    working_dir: str | Path | bool = True,
+    allowed_commands: list[str] | None = None,
+    shell_timeout: int = 30,
+    mud: dict[str, Any] | bool | None = None,
+) -> None:
+    """Interactive REPL — see :func:`run` for full option documentation."""
+    cfg = config()  # loads .env; populates os.environ
+    task_class = Player
+    task_settings = cfg.tasks(task_class.task_name())
+
+    if system is None:
+        system = task_class.system_prompt(
+            task_settings,
+            user_prompts_dir=cfg.user_prompts_dir,
+            default_prompts_dir=PROMPTS_DIR,
+        )
+    if model is None:
+        model = task_class.model(task_settings)
+    if backend is None:
+        backend = task_class.provider(task_settings)
+    if api_key is None and backend in _API_KEY_ENV:
+        api_key = os.environ.get(_API_KEY_ENV[backend])
+
+    resolved_working_dir = _resolve_working_dir(working_dir)
+    ctx = Context(task=task_class, system=system, working_dir=resolved_working_dir)
+    registry = Registry(ctx)
+
+    if setup is not None:
+        setup(RunDSL(registry))
+
+    if resolved_working_dir is not None:
+        Tools.FileSystem.register(registry, working_dir=resolved_working_dir)
+        Tools.Shell.register(
+            registry, working_dir=resolved_working_dir, timeout=shell_timeout,
+            allowed_commands=allowed_commands,
+        )
+
+    resolved_mud = _resolve_mud(mud, cfg)
+    if resolved_mud is not None:
+        Tools.Mud.register(registry, **resolved_mud)
+
+    be = _build_backend(backend, model=model, api_key=api_key, ollama_host=ollama_host)
+
+    builder = PromptBuilder(ctx, be)
+    client = Client(builder)
+    effective_max_iterations = task_class.max_iterations(task_settings)
+    effective_max_output_tokens = (
+        max_output_tokens
+        if max_output_tokens is not None
+        else task_class.max_output_tokens(task_settings)
+    )
+    logger = Logger(
+        log=log,
+        snapshot={
+            "task": task_class.task_name(),
+            "max_iterations": effective_max_iterations,
+            "max_output_tokens": effective_max_output_tokens,
+            "model": model,
+            "provider": backend,
+        },
+    )
+
+    try:
+        Repl(
+            context=ctx,
+            registry=registry,
+            builder=builder,
+            client=client,
+            logger=logger,
+            task_settings=task_settings,
+            max_iterations=effective_max_iterations,
+            max_output_tokens=effective_max_output_tokens,
+            config_dir=cfg.dir,
+            provider=backend,
+            model=model,
+            version=VERSION,
+            api_key=api_key,
+            mud=resolved_mud,
+        ).start()
+    except KeyboardInterrupt:
+        print("\nInterrupted.")
+    finally:
+        logger.close()
+
+
+def _build_backend(
+    backend: str, *, model: str, api_key: str | None, ollama_host: str
+) -> Base:
+    if backend == "anthropic":
+        return Anthropic(api_key=api_key, model=model)
+    if backend == "openai":
+        return OpenAI(api_key=api_key, model=model)
+    if backend == "gemini":
+        return Gemini(api_key=api_key, model=model)
+    if backend == "mammouth":
+        return Mammouth(api_key=api_key, model=model)
+    if backend == "ollama":
+        return Ollama(host=ollama_host, model=model)
+    if backend == "ollama_cloud":
+        return OllamaCloud(api_key=api_key, model=model)
+    raise ValueError(
+        f"Unknown backend {backend!r}. "
+        "Use 'anthropic', 'openai', 'gemini', 'mammouth', 'ollama', or 'ollama_cloud'."
+    )
+
+
+def _resolve_working_dir(working_dir: str | Path | bool) -> Path | None:
+    """``True`` (default) → ``Path.cwd()`` at call time; ``False`` → disabled;
+    a path → used as-is. A plain ``Path.cwd()`` default argument would be
+    evaluated once at import time instead of per call, so the tri-state
+    True/False/path form is used instead of a mutable default.
+    """
+    if working_dir is False:
+        return None
+    if working_dir is True:
+        return Path.cwd()
+    return Path(working_dir)
+
+
+def _resolve_mud(mud: dict[str, Any] | bool | None, cfg: Config) -> dict[str, Any] | None:
+    """``False`` → disabled; a dict → used as-is; ``None`` (default) → build
+    from ``cfg`` (used when ``mud`` is not passed to ``run``/``repl``).
+    """
+    if mud is False:
+        return None
+    if mud is not None:
+        return mud
+    return _mud_opts_from_config(cfg)
+
+
+def _mud_opts_from_config(cfg: Config) -> dict[str, Any] | None:
+    """Build a mud options dict from config. Returns ``None`` if no MUD host
+    is configured."""
+    if not cfg.mud_host or not cfg.mud_username:
+        return None
+    return {
+        "host": cfg.mud_host,
+        "port": cfg.mud_port,
+        "name": cfg.mud_username,
+        "password": cfg.mud_password,
+    }
+
+
+__all__ = [
+    "Config",
+    "Player",
+    "Tool",
+    "Tools",
+    "Message",
+    "Context",
+    "Registry",
+    "PromptBuilder",
+    "Client",
+    "Agent",
+    "Logger",
+    "RunDSL",
+    "Repl",
+    "VERSION",
+    "UnknownToolError",
+    "UnsupportedModelError",
+    "ApiError",
+    "LoopError",
+    "config",
+    "set_quiet",
+    "quiet",
+    "set_debug",
+    "debug",
+    "run",
+    "repl",
+]

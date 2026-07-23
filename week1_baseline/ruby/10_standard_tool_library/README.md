@@ -65,3 +65,12 @@ ruby examples/demo.rb
 # or via the global executable pointed at this step:
 BOUKENSHA_PATH=~/Sites/boukensha/10_standard_tool_library boukensha
 ```
+
+## Technical Considerations
+
+This is just observations we dont want to fix these right now just to perserve current
+future layers.
+- There could be a case where if a sessions is already is in used for a user they are
+prompted with Yes or No to kill the session and our agent's/mud_manager doesn't have a way
+to handle that case.
+

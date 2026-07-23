@@ -29,6 +29,26 @@ class Mammouth(Base):
             "cost_per_million": {"input": 5.0, "output": 25.0},
             "usage_unit": "tokens",
         },
+        "claude-sonnet-4": {
+            "context_window": 1_000_000,
+            "cost_per_million": {"input": 3.0, "output": 15.0},
+            "usage_unit": "tokens",
+        },
+        "claude-haiku-4-5": {
+            "context_window": 1_000_000,
+            "cost_per_million": {"input": 1.0, "output": 5.0},
+            "usage_unit": "tokens",
+        },
+        "claude-sonnet-4-5": {
+            "context_window": 1_000_000,
+            "cost_per_million": {"input": 3.0, "output": 15.0},
+            "usage_unit": "tokens",
+        },
+        "claude-sonnet-4-6": {
+            "context_window": 1_000_000,
+            "cost_per_million": {"input": 3.0, "output": 15.0},
+            "usage_unit": "tokens",
+        },
         "gpt-5.5": {
             "context_window": 1_050_000,
             "cost_per_million": {"input": 5.0, "output": 30.0},
