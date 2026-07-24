@@ -5,6 +5,19 @@ module Boukensha
   class Context
     attr_reader :task, :system, :messages, :tools, :working_dir
 
+    # Append text to the system prompt after construction.
+    #
+    # Used by Tools::Mcp to fold an MCP server's `instructions` into the prompt.
+    # The server declares how it wants to be driven — which tool to call first,
+    # what state it holds — and the agent reads that, instead of the client
+    # hard-coding knowledge of a particular server's tools.
+    def append_system(text)
+      return if text.nil? || text.to_s.strip.empty?
+
+      parts   = [@system, text].compact.reject { |s| s.to_s.strip.empty? }
+      @system = parts.join("\n\n")
+    end
+
     def initialize(task:, system: nil, working_dir: nil)
       @task        = task
       @system      = system

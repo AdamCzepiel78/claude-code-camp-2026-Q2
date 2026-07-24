@@ -76,6 +76,20 @@ module Boukensha
       v.nil? ? 0.85 : Float(v)
     end
 
+    # ---------- MCP servers -----------------------------------------------
+
+    # Additional MCP servers declared in settings.yaml's `mcp_servers:` block,
+    # as a Hash of name => spec (command:/env:/after_connect:/only:/except:).
+    # Empty Hash when none are declared.
+    #
+    # The MUD is wired separately, not through here: it carries an in-process
+    # fallback (mud_mcp: false) and a reachability probe that no generic server
+    # has. This block is for any *extra* server a user plugs in by configuration
+    # alone — a Kubernetes server, a filesystem server — with no new code.
+    def mcp_servers
+      dig(:mcp_servers) || {}
+    end
+
     # ---------- low-level helpers -----------------------------------------
 
     # Fetch a nested key path from settings, e.g. dig(:provider, :model)
