@@ -26,3 +26,7 @@ http://localhost:4567/ -> /sessions/20260724T201855Z-ccb74b9d
 http://localhost:4567/sessions/20260724T201855Z-ccb74b9d -> /
 127.0.0.1 - - [24/Jul/2026:22:27:29 CEST] "GET /sessions/20260724T201855Z-ccb74b9d HTTP/1.1" 200 22704
 http://localhost:4567/ -> /sessions/20260724T201855Z-ccb74b9d
+127.0.0.1 - - [25/Jul/2026:00:28:01 CEST] "GET / HTTP/1.1" 200 26550
+http://localhost:4567/sessions/20260724T201855Z-ccb74b9d -> /
+127.0.0.1 - - [25/Jul/2026:00:29:17 CEST] "GET /sessions/20260724T222643Z-0dff3b37 HTTP/1.1" 200 20488
+http://localhost:4567/ -> /sessions/20260724T222643Z-0dff3b37

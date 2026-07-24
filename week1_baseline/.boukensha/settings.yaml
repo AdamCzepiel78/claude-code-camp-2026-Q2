@@ -2,6 +2,7 @@ tasks:
   player:
     provider: mammouth
     model: claude-haiku-4-5
+    max_iterations: 100
     prompt_override:
       system: false
 mud:

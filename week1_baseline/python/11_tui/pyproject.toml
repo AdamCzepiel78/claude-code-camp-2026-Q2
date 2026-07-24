@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boukensha"
+version = "0.11.0"
+description = "BOUKENSHA — a terminal UI (Python port, Step 11): the Step 10 agent (FileSystem, Shell, MUD gameplay tools) wrapped in a full-screen Textual TUI by default. Pass tui=False / --no-tui for the plain REPL. Set BOUKENSHA_PATH to load a specific lesson step, or run with defaults to use the bundled release."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv>=1.0",
+    "PyYAML>=6.0",
+    "textual>=8.0",
+]
+
+# The pip analog of the gemspec's executable: `pip install .` puts `boukensha`
+# on $PATH, dispatching to the standalone loader.
+[project.scripts]
+boukensha = "boukensha_loader:main"
+
+[tool.setuptools]
+# Ship the standalone loader (top-level module, outside the package) alongside
+# the boukensha package so the console script can find it after install.
+py-modules = ["boukensha_loader"]
+
+[tool.setuptools.packages.find]
+include = ["boukensha*"]
+
+[tool.setuptools.package-data]
+boukensha = ["py.typed"]
