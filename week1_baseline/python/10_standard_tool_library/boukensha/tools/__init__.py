@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from boukensha.tools import file_system as FileSystem
 from boukensha.tools import mud as Mud
+from boukensha.tools import mud_mcp as MudMcp
 from boukensha.tools import shell as Shell
 
-__all__ = ["FileSystem", "Shell", "Mud"]
+__all__ = ["FileSystem", "Shell", "Mud", "MudMcp"]

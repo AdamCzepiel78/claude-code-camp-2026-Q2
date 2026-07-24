@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+#
+# MCP server for MudManager — speaks JSON-RPC 2.0 over stdio.
+#
+# Usage:
+#   mud_manager_mcp [--host H] [--port P] [--name N] [--password S] [--autoconnect]
+#
+# Every flag has an environment fallback, so the usual MCP client config
+# (which passes env, not argv) works without flags:
+#   MUD_HOST (localhost)  MUD_PORT (4000)  MUD_NAME  MUD_PASSWORD
+#   MUD_MCP_DEBUG=1       log protocol traffic to stderr
+#
+# These are only *defaults* — a client may override any of them per call via
+# session_open, which is also how you drive several characters at once.
+#
+# stdout carries the protocol and nothing else; diagnostics go to stderr.
+
+require "optparse"
+
+$LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
+require "mud_manager_mcp"
+
+options = {
+  host:        ENV["MUD_HOST"] || MudManagerMcp::Session::DEFAULT_HOST,
+  port:        Integer(ENV["MUD_PORT"] || MudManagerMcp::Session::DEFAULT_PORT),
+  name:        ENV["MUD_NAME"],
+  password:    ENV["MUD_PASSWORD"],
+  autoconnect: false,
+  debug:       !ENV["MUD_MCP_DEBUG"].nil?
+}
+
+OptionParser.new do |opts|
+  opts.banner = "usage: mud_manager_mcp [options]"
+  opts.on("--host HOST",     "MUD host (default #{options[:host]})")   { |v| options[:host] = v }
+  opts.on("--port PORT", Integer, "MUD port (default #{options[:port]})") { |v| options[:port] = v }
+  opts.on("--name NAME",     "Default character name")                 { |v| options[:name] = v }
+  opts.on("--password PASS", "Default character password")             { |v| options[:password] = v }
+  opts.on("--autoconnect",   "Open the 'default' session at startup")  { options[:autoconnect] = true }
+  opts.on("--debug",         "Log protocol traffic to stderr")         { options[:debug] = true }
+  opts.on("-h", "--help", "Show this message") { warn opts; exit 0 }
+end.parse!
+
+registry = MudManagerMcp::SessionRegistry.new(
+  defaults: {
+    host: options[:host], port: options[:port],
+    name: options[:name], password: options[:password]
+  }
+)
+
+# Opt-in convenience: pay the ~6s login before the first tool call rather than
+# during it. Failure is not fatal — the agent can still call session_open and
+# see the real error.
+if options[:autoconnect]
+  begin
+    registry.open
+    warn "[mud_manager.mcp] autoconnected 'default' session"
+  rescue StandardError => e
+    warn "[mud_manager.mcp] autoconnect failed: #{e.message} — call session_open manually"
+  end
+end
+
+server = MudManagerMcp::Server.new(registry: registry, debug: options[:debug])
+
+# Close MUD connections on Ctrl-C / kill as well as on normal stdin EOF.
+%w[INT TERM].each do |signal|
+  trap(signal) do
+    registry.close_all
+    exit 0
+  end
+end
+
+server.run

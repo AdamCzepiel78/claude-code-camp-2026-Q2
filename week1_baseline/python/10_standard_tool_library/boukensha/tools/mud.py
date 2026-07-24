@@ -8,7 +8,7 @@ connection for all subsequent tool calls.
 
 ``mud_manager`` is vendored one level up at ``python/mud_manager/`` (a sibling
 of every step directory, not nested inside this step) — mirroring the Ruby
-original, which is its own gem (``week0_explore/mud_manager``) pulled in as a
+original, which is its own gem (``week1_baseline/mud_manager_mcp``) pulled in as a
 dependency rather than duplicated per step. This module adds that directory's
 parent onto ``sys.path`` before importing it.
 

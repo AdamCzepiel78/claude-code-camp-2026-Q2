@@ -46,10 +46,19 @@ module Boukensha
   #
   # shell_timeout:    Seconds before a run_command is killed (default 30).
   #
-  # mud:              Hash of MUD connection options — registers all MUD gameplay
-  #                   tools and keeps a single session alive across every tool call.
-  #                   When nil (default), config.mud_* values are used if mud_host
-  #                   is set in settings.yaml. Pass mud: false to disable entirely.
+  # mud:              Hash of MUD connection options (host/port/name/password).
+  #                   When nil (default), config.mud_* values from settings.yaml
+  #                   are used. Pass mud: false to disable MUD play entirely.
+  #                   With no connection settings anywhere, no MUD tools are
+  #                   registered and no MCP server is started.
+  #
+  # mud_mcp:          Where the MUD tools come from. true (default) sources them
+  #                   from the mud_manager_mcp server over MCP — the tools are
+  #                   defined once there and discovered at runtime, so this is
+  #                   the same tool set every language gets. Pass a Hash to add
+  #                   options (command:, autoconnect:, only:, except:, debug:).
+  #                   Pass false to use the in-process Tools::Mud instead, which
+  #                   needs no subprocess but restates every tool by hand.
   def self.run(
     task:,
     system:           nil,
@@ -63,6 +72,7 @@ module Boukensha
     allowed_commands: nil,
     shell_timeout:    30,
     mud:              nil,
+    mud_mcp:          true,
     &block
   )
     cfg           = config                           # loads .env; populates ENV
@@ -88,9 +98,7 @@ module Boukensha
                             timeout: shell_timeout, allowed_commands: allowed_commands)
     end
 
-    # mud: nil means "use config if host is set"; mud: false means "skip entirely"
-    resolved_mud = mud == false ? nil : (mud || mud_opts_from_config(cfg))
-    Tools::Mud.register(registry, **resolved_mud) if resolved_mud
+    resolved_mud = register_mud_tools(registry, cfg, mud: mud, mud_mcp: mud_mcp)
 
     RunDSL.new(registry).instance_eval(&block) if block
 
@@ -137,6 +145,7 @@ module Boukensha
     allowed_commands: nil,
     shell_timeout:    30,
     mud:              nil,
+    mud_mcp:          true,
     &block
   )
     cfg           = config                           # loads .env; populates ENV
@@ -162,8 +171,7 @@ module Boukensha
                             timeout: shell_timeout, allowed_commands: allowed_commands)
     end
 
-    resolved_mud = mud == false ? nil : (mud || mud_opts_from_config(cfg))
-    Tools::Mud.register(registry, **resolved_mud) if resolved_mud
+    resolved_mud = register_mud_tools(registry, cfg, mud: mud, mud_mcp: mud_mcp)
 
     RunDSL.new(registry).instance_eval(&block) if block
 
@@ -211,6 +219,32 @@ module Boukensha
     logger&.close
   end
 
+  # Register the MUD gameplay tools, either in-process or via the MCP server.
+  #
+  # Both paths register tools under the same names (look, move, attack, …), so
+  # they are mutually exclusive — mud_mcp wins when both are requested.
+  # Returns the resolved connection settings, which the REPL banner uses to
+  # show MUD reachability.
+  def self.register_mud_tools(registry, cfg, mud:, mud_mcp:)
+    return nil if mud == false                       # explicit opt-out wins
+
+    # A Hash in mud: is a connection override; otherwise fall back to config.
+    # No connection settings anywhere means no MUD tools at all — which also
+    # keeps us from spawning an MCP server for an agent that will never play.
+    connection = (mud.is_a?(Hash) ? mud : nil) || mud_opts_from_config(cfg)
+    return nil if connection.nil?
+
+    if mud_mcp
+      overrides = mud_mcp.is_a?(Hash) ? mud_mcp : {}
+      Tools::MudMcp.register(registry, **connection.merge(overrides))
+    else
+      Tools::Mud.register(registry, **connection)
+    end
+
+    connection
+  end
+  private_class_method :register_mud_tools
+
   # Build a mud options hash from config (used when mud: nil is passed to run/repl).
   # Returns nil if no MUD host is configured.
   def self.mud_opts_from_config(cfg)
@@ -247,3 +281,5 @@ require_relative "boukensha/repl"
 require_relative "boukensha/tools/file_system"
 require_relative "boukensha/tools/shell"
 require_relative "boukensha/tools/mud"
+require_relative "boukensha/mcp_client"
+require_relative "boukensha/tools/mud_mcp"

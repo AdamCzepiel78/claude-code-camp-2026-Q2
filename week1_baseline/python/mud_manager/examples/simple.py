@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Port of ``week0_explore/mud_manager/examples/simple.rb``.
+"""Port of ``week1_baseline/mud_manager_mcp_mcp/examples/simple.rb``.
 
 Minimal end-to-end demo of the ``mud_manager`` library on its own, with no
 ``boukensha`` agent involved: open a session, log in, send one command, print

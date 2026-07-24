@@ -19,8 +19,8 @@ Gem::Specification.new do |spec|
   spec.bindir      = "bin"
   spec.executables = ["boukensha"]
 
-  # MUD session management and CircleMUD command primitives.
-  spec.add_dependency "mud_manager", "~> 0.1"
+  # MUD session management, CircleMUD command primitives, and the MCP server.
+  spec.add_dependency "mud_manager_mcp", "~> 0.1"
 
   # net/http and json are stdlib. Users supply their own ANTHROPIC_API_KEY.
 end

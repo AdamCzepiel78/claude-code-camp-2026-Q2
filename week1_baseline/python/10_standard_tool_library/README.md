@@ -79,7 +79,7 @@ Tools.Mud.register(registry, host="localhost", port=4000, name="Gandalf", passwo
 ## `mud_manager` — vendored, not pip-installed
 
 Ruby's `mud_manager` is a real (if unpublished) gem, vendored in this repo at
-`week0_explore/mud_manager` and pulled in via the gemspec as a dependency. There is
+`week1_baseline/mud_manager_mcp` and pulled in via the gemspec as a dependency. There is
 no PyPI equivalent, so the Python port vendors a translated copy at
 **`python/mud_manager/`** — a sibling of every step directory (`00_config`,
 `01_struct_skeleton`, … `10_standard_tool_library`), not nested inside this step.

@@ -1,10 +1,10 @@
-require "mud_manager"
+require "mud_manager_mcp"
 
 module Boukensha
   module Tools
     # Mud registers MUD-gameplay tools against a registry.
     #
-    # A single MudManager::Session is created when the tools are registered and
+    # A single MudManagerMcp::Session is created when the tools are registered and
     # shared by every tool via closure — the agent logs in once and reuses the
     # connection for all subsequent tool calls.
     #
@@ -65,8 +65,8 @@ module Boukensha
     #
     module Mud
       def self.register(registry, host: "localhost", port: 4000, name:, password:)
-        session = MudManager::Session.new(host: host, port: port)
-        p       = MudManager::Primitives
+        session = MudManagerMcp::Session.new(host: host, port: port)
+        p       = MudManagerMcp::Primitives
 
         # Send a primitive command and return the MUD's response text.
         # Raises if the session is not open.
@@ -103,7 +103,7 @@ module Boukensha
               session.open
               welcome = session.login(name, password)
               "connected to #{session.host}:#{session.port}\n#{welcome}"
-            rescue MudManager::Session::Error => e
+            rescue MudManagerMcp::Session::Error => e
               "error: #{e.message}"
             end
           end
@@ -470,7 +470,7 @@ module Boukensha
         begin
           session.open
           session.login(name, password)
-        rescue MudManager::Session::Error => e
+        rescue MudManagerMcp::Session::Error => e
           warn "[boukensha] MUD auto-connect failed: #{e.message} — call mud_connect manually"
         end
 

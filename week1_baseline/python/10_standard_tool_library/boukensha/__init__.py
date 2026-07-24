@@ -21,6 +21,13 @@ requiring manual registration:
   keeps a single session alive across every tool call. When ``None`` (default),
   ``config().mud_*`` values are used if ``mud_host``/``mud_username`` are set in
   ``settings.yaml``. Pass ``mud=False`` to disable entirely.
+- ``mud_mcp``: where the MUD tools come from. ``True`` (default) sources them
+  from the ``mud_manager_mcp`` server over MCP — defined once there and
+  discovered at runtime, so this is the same tool set every language gets.
+  Pass a dict to add options (``command``, ``autoconnect``, ``only``,
+  ``except_``, ``debug``). Pass ``False`` to use the in-process
+  ``boukensha.tools.Mud`` instead, which needs no Ruby subprocess but
+  restates every tool by hand.
 """
 
 from __future__ import annotations
@@ -102,6 +109,7 @@ def run(
     allowed_commands: list[str] | None = None,
     shell_timeout: int = 30,
     mud: dict[str, Any] | bool | None = None,
+    mud_mcp: dict[str, Any] | bool = True,
 ) -> str:
     """The top-level entry point (Ruby's ``Boukensha.run``).
 
@@ -151,10 +159,7 @@ def run(
             allowed_commands=allowed_commands,
         )
 
-    # mud=None means "use config if host is set"; mud=False means "skip entirely"
-    resolved_mud = _resolve_mud(mud, cfg)
-    if resolved_mud is not None:
-        Tools.Mud.register(registry, **resolved_mud)
+    resolved_mud = _register_mud_tools(registry, cfg, mud=mud, mud_mcp=mud_mcp)
 
     be = _build_backend(backend, model=model, api_key=api_key, ollama_host=ollama_host)
 
@@ -208,6 +213,7 @@ def repl(
     allowed_commands: list[str] | None = None,
     shell_timeout: int = 30,
     mud: dict[str, Any] | bool | None = None,
+    mud_mcp: dict[str, Any] | bool = True,
 ) -> None:
     """Interactive REPL — see :func:`run` for full option documentation."""
     cfg = config()  # loads .env; populates os.environ
@@ -241,9 +247,7 @@ def repl(
             allowed_commands=allowed_commands,
         )
 
-    resolved_mud = _resolve_mud(mud, cfg)
-    if resolved_mud is not None:
-        Tools.Mud.register(registry, **resolved_mud)
+    resolved_mud = _register_mud_tools(registry, cfg, mud=mud, mud_mcp=mud_mcp)
 
     be = _build_backend(backend, model=model, api_key=api_key, ollama_host=ollama_host)
 
@@ -321,6 +325,39 @@ def _resolve_working_dir(working_dir: str | Path | bool) -> Path | None:
     if working_dir is True:
         return Path.cwd()
     return Path(working_dir)
+
+
+def _register_mud_tools(
+    registry: Registry,
+    cfg: Config,
+    *,
+    mud: dict[str, Any] | bool | None,
+    mud_mcp: dict[str, Any] | bool,
+) -> dict[str, Any] | None:
+    """Register the MUD gameplay tools, either in-process or via the MCP server.
+
+    Both paths register tools under the same names (look, move, attack, …), so
+    they are mutually exclusive — ``mud_mcp`` wins when both are requested.
+    Returns the resolved connection settings, which the REPL banner uses to show
+    MUD reachability.
+    """
+    if mud is False:                      # explicit opt-out wins
+        return None
+
+    # A dict in ``mud`` is a connection override; otherwise fall back to config.
+    # No connection settings anywhere means no MUD tools at all — which also
+    # keeps us from spawning an MCP server for an agent that will never play.
+    connection = mud if isinstance(mud, dict) else _mud_opts_from_config(cfg)
+    if connection is None:
+        return None
+
+    if mud_mcp:
+        overrides = mud_mcp if isinstance(mud_mcp, dict) else {}
+        Tools.MudMcp.register(registry, **{**connection, **overrides})
+    else:
+        Tools.Mud.register(registry, **connection)
+
+    return connection
 
 
 def _resolve_mud(mud: dict[str, Any] | bool | None, cfg: Config) -> dict[str, Any] | None:

@@ -1,9 +1,9 @@
-"""Port of ``week0_explore/mud_manager`` (Ruby gem ``mud_manager``, vendored here
+"""Port of ``week1_baseline/mud_manager_mcp`` (Ruby gem ``mud_manager``, vendored here
 because no PyPI package provides CircleMUD session management).
 
 Lives one level up from any single step (``python/mud_manager/``, a sibling of
 ``python/10_standard_tool_library/`` etc.) — mirroring the Ruby original, which
-is its own gem (``week0_explore/mud_manager``) pulled in as a dependency by
+is its own gem (``week1_baseline/mud_manager_mcp``) pulled in as a dependency by
 each step's gemspec rather than duplicated per step. Steps that need it add
 this directory's parent to ``sys.path`` before importing (see
 ``boukensha/tools/mud.py``).
