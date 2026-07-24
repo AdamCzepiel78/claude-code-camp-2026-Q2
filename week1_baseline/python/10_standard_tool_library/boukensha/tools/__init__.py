@@ -9,8 +9,9 @@ its tools on a :class:`~boukensha.registry.Registry`. See
 from __future__ import annotations
 
 from boukensha.tools import file_system as FileSystem
+from boukensha.tools import mcp as Mcp
 from boukensha.tools import mud as Mud
 from boukensha.tools import mud_mcp as MudMcp
 from boukensha.tools import shell as Shell
 
-__all__ = ["FileSystem", "Shell", "Mud", "MudMcp"]
+__all__ = ["FileSystem", "Shell", "Mud", "Mcp", "MudMcp"]

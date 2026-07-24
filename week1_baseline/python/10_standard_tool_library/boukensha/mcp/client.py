@@ -1,4 +1,4 @@
-"""Port of ``lib/boukensha/mcp_client.rb``.
+"""Port of ``lib/boukensha/mcp/client.rb``.
 
 A minimal Model Context Protocol client speaking JSON-RPC 2.0 over a
 subprocess's stdin/stdout.
@@ -8,9 +8,13 @@ rest of BOUKENSHA avoids dependencies: the protocol is small enough to read, and
 an MCP server is just a program you talk to over two pipes.
 
 This is what makes the tool layer language-neutral. The MUD tools are defined
-once, in the Ruby ``mud_manager`` MCP server; this client discovers them at
+once, in the Ruby ``mud_manager_mcp`` MCP server; this client discovers them at
 runtime. Nothing about the tools is restated here — which is the whole point,
 since ``boukensha/tools/mud.py`` currently restates all 27 of them by hand.
+
+Mirrors ``Boukensha::MCP::Client`` on the Ruby side: the class is ``Client`` and
+its errors are ``Error`` / ``ProtocolError`` in this module's namespace, the
+Python equivalent of the classes Ruby nests inside ``Client``.
 """
 
 from __future__ import annotations
@@ -27,15 +31,15 @@ from boukensha.version import VERSION
 PROTOCOL_VERSION = "2025-06-18"
 
 
-class McpError(Exception):
+class Error(Exception):
     pass
 
 
-class McpProtocolError(McpError):
+class ProtocolError(Error):
     pass
 
 
-class McpClient:
+class Client:
     """Spawn an MCP server, shake hands, discover tools, call them.
 
     ``timeout`` is generous by default because ``session_open`` pays a ~6s MUD
@@ -46,7 +50,7 @@ class McpClient:
         self,
         *,
         command: list[str],
-        env: dict[str, str] | None = None,
+        env: dict[str, str | None] | None = None,
         timeout: float = 60.0,
         debug: bool = False,
     ) -> None:
@@ -62,10 +66,16 @@ class McpClient:
         self.server_info: dict[str, Any] = {}
         self.instructions: str | None = None
 
-    def start(self) -> "McpClient":
+    def start(self) -> "Client":
         import os
 
+        # A None value in env *removes* that variable from the child's
+        # environment, matching the Ruby client's Open3 semantics. Callers use
+        # it to stop a child inheriting something harmful — e.g. the mud_mcp
+        # preset clears BUNDLE_* so a Ruby server spawned from inside
+        # `bundle exec` does not re-initialise bundler and flood stderr.
         environment = {**os.environ, **self._env}
+        environment = {k: v for k, v in environment.items() if v is not None}
         self._proc = subprocess.Popen(
             self._command,
             stdin=subprocess.PIPE,
@@ -171,7 +181,7 @@ class McpClient:
 
             if "error" in response:
                 err = response["error"]
-                raise McpProtocolError(
+                raise ProtocolError(
                     f"{method} failed ({err.get('code')}): {err.get('message')}"
                 )
             return response.get("result") or {}
@@ -185,12 +195,12 @@ class McpClient:
 
     def _write(self, message: dict[str, Any]) -> None:
         if self._proc is None or self._proc.stdin is None:
-            raise McpError("MCP server is not running")
+            raise Error("MCP server is not running")
         try:
             self._proc.stdin.write(json.dumps(message) + "\n")
             self._proc.stdin.flush()
         except BrokenPipeError as e:
-            raise McpError("MCP server exited") from e
+            raise Error("MCP server exited") from e
 
     def _await_response(self, request_id: int) -> dict[str, Any]:
         """Wait for the response carrying our id, skipping any notification."""
@@ -198,7 +208,7 @@ class McpClient:
             try:
                 message = self._responses.get(timeout=self._timeout)
             except queue.Empty as e:
-                raise McpError(f"MCP server did not respond within {self._timeout}s") from e
+                raise Error(f"MCP server did not respond within {self._timeout}s") from e
 
             if message.get("id") == request_id:
                 return message

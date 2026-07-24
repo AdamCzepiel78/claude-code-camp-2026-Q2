@@ -19,6 +19,8 @@
 require "optparse"
 
 $LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
+$LOAD_PATH.unshift(File.expand_path("../../mcp_server/lib", __dir__))  # sibling gem, runs from a checkout
+require "mcp_server"
 require "mud_manager_mcp"
 
 options = {
@@ -60,7 +62,15 @@ if options[:autoconnect]
   end
 end
 
-server = MudManagerMcp::Server.new(registry: registry, debug: options[:debug])
+# The transport is generic (mcp_server); everything MUD-specific is injected.
+server = McpServer::Server.new(
+  tools:        MudManagerMcp::ToolProvider.new(registry),
+  name:         "mud-manager",
+  version:      MudManagerMcp::VERSION,
+  instructions: MudManagerMcp::INSTRUCTIONS,
+  on_shutdown:  -> { registry.close_all },
+  debug:        options[:debug]
+)
 
 # Close MUD connections on Ctrl-C / kill as well as on normal stdin EOF.
 %w[INT TERM].each do |signal|

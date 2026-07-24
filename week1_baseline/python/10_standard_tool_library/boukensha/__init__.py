@@ -110,6 +110,7 @@ def run(
     shell_timeout: int = 30,
     mud: dict[str, Any] | bool | None = None,
     mud_mcp: dict[str, Any] | bool = True,
+    mcp_servers: dict[str, Any] | bool | None = None,
 ) -> str:
     """The top-level entry point (Ruby's ``Boukensha.run``).
 
@@ -159,7 +160,8 @@ def run(
             allowed_commands=allowed_commands,
         )
 
-    resolved_mud = _register_mud_tools(registry, cfg, mud=mud, mud_mcp=mud_mcp)
+    resolved_mud, mud_provenance = _register_mud_tools(registry, cfg, mud=mud, mud_mcp=mud_mcp)
+    mcp_provenance = _register_declared_servers(registry, cfg, mcp_servers)
 
     be = _build_backend(backend, model=model, api_key=api_key, ollama_host=ollama_host)
 
@@ -179,6 +181,8 @@ def run(
             "max_output_tokens": effective_max_output_tokens,
             "model": model,
             "provider": backend,
+            **({"mud_tools": mud_provenance} if mud_provenance else {}),
+            **({"mcp_servers": mcp_provenance} if mcp_provenance else {}),
         },
     )
     agent = Agent(
@@ -214,6 +218,7 @@ def repl(
     shell_timeout: int = 30,
     mud: dict[str, Any] | bool | None = None,
     mud_mcp: dict[str, Any] | bool = True,
+    mcp_servers: dict[str, Any] | bool | None = None,
 ) -> None:
     """Interactive REPL — see :func:`run` for full option documentation."""
     cfg = config()  # loads .env; populates os.environ
@@ -247,7 +252,8 @@ def repl(
             allowed_commands=allowed_commands,
         )
 
-    resolved_mud = _register_mud_tools(registry, cfg, mud=mud, mud_mcp=mud_mcp)
+    resolved_mud, mud_provenance = _register_mud_tools(registry, cfg, mud=mud, mud_mcp=mud_mcp)
+    mcp_provenance = _register_declared_servers(registry, cfg, mcp_servers)
 
     be = _build_backend(backend, model=model, api_key=api_key, ollama_host=ollama_host)
 
@@ -267,6 +273,8 @@ def repl(
             "max_output_tokens": effective_max_output_tokens,
             "model": model,
             "provider": backend,
+            **({"mud_tools": mud_provenance} if mud_provenance else {}),
+            **({"mcp_servers": mcp_provenance} if mcp_provenance else {}),
         },
     )
 
@@ -333,31 +341,69 @@ def _register_mud_tools(
     *,
     mud: dict[str, Any] | bool | None,
     mud_mcp: dict[str, Any] | bool,
-) -> dict[str, Any] | None:
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
     """Register the MUD gameplay tools, either in-process or via the MCP server.
 
     Both paths register tools under the same names (look, move, attack, …), so
     they are mutually exclusive — ``mud_mcp`` wins when both are requested.
-    Returns the resolved connection settings, which the REPL banner uses to show
-    MUD reachability.
+    Returns ``(connection, provenance)``. The connection drives the REPL banner;
+    the provenance is recorded in the session log so it is afterwards visible
+    *which* implementation served the MUD tools. The tool names differ between
+    the two paths, but relying on that to tell them apart is guesswork; this
+    states it.
     """
     if mud is False:                      # explicit opt-out wins
-        return None
+        return None, None
 
     # A dict in ``mud`` is a connection override; otherwise fall back to config.
     # No connection settings anywhere means no MUD tools at all — which also
     # keeps us from spawning an MCP server for an agent that will never play.
     connection = mud if isinstance(mud, dict) else _mud_opts_from_config(cfg)
     if connection is None:
-        return None
+        return None, None
 
     if mud_mcp:
         overrides = mud_mcp if isinstance(mud_mcp, dict) else {}
-        Tools.MudMcp.register(registry, **{**connection, **overrides})
-    else:
-        Tools.Mud.register(registry, **connection)
+        client = Tools.MudMcp.register(registry, **{**connection, **overrides})
+        provenance = {
+            "source": "mcp",
+            "server": client.server_info.get("name"),
+            "server_version": client.server_info.get("version"),
+        }
+        return connection, {k: v for k, v in provenance.items() if v is not None}
 
-    return connection
+    Tools.Mud.register(registry, **connection)
+    return connection, {"source": "in_process"}
+
+
+def _register_declared_servers(
+    registry: Registry,
+    cfg: Config,
+    mcp_servers: dict[str, Any] | bool | None,
+) -> list[dict[str, Any]] | None:
+    """Connect any MCP servers declared in settings.yaml's ``mcp_servers:``
+    block (or passed explicitly as a dict), on top of the MUD.
+
+    This is the config-driven path: a user plugs in a Kubernetes or filesystem
+    server by editing YAML, with no new code. Tool-name collisions across
+    servers are namespaced by :mod:`boukensha.mcp.servers`; the MUD's tools take
+    part in that too.
+
+    - ``mcp_servers=None`` → use settings.yaml's ``mcp_servers`` block (default)
+    - ``mcp_servers={...}`` → use this dict instead
+    - ``mcp_servers=False`` → connect none, even if declared in settings.yaml
+
+    Returns the per-server provenance (recorded in the session log) or ``None``.
+    """
+    if mcp_servers is False:
+        return None
+
+    specs = mcp_servers if isinstance(mcp_servers, dict) else cfg.mcp_servers
+    if not specs:
+        return None
+
+    _clients, provenance = Tools.Mcp.connect(registry, specs)
+    return provenance
 
 
 def _resolve_mud(mud: dict[str, Any] | bool | None, cfg: Config) -> dict[str, Any] | None:

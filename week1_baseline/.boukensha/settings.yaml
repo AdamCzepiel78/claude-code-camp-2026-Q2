@@ -9,3 +9,17 @@ mud:
   port: 4000
   username: dummy
   password: helloworld
+
+# Additional MCP servers, connected on top of the MUD. Each entry is a server:
+# the key names it (and namespaces its tools on a name collision), and whatever
+# it advertises over MCP becomes agent tools — no new code. The MUD stays wired
+# separately above, since it has an in-process fallback and a reachability probe.
+#
+# mcp_servers:
+#   kubernetes:
+#     command: ["kubernetes-mcp-server", "--read-only"]
+#     except:  ["pods_delete"]        # drop tools you don't want registered
+#   notes:
+#     command: ["python3", "/path/to/notes_server.py"]
+#     env:     { NOTES_DB: /tmp/notes.db }
+#     after_connect: notes_open       # call once right after connecting

@@ -72,6 +72,20 @@ class Config:
     def mud_password(self) -> str | None:
         return self.dig("mud", "password")
 
+    # ---------- MCP servers ------------------------------------------------
+
+    @property
+    def mcp_servers(self) -> dict[str, Any]:
+        """Additional MCP servers declared in settings.yaml's ``mcp_servers:``.
+
+        A mapping of name => spec (``command``/``env``/``after_connect``/``only``/
+        ``except``); empty when none are declared. The MUD is wired separately —
+        it carries an in-process fallback (``mud_mcp=False``) and a reachability
+        probe that no generic server has. This block is for any *extra* server a
+        user plugs in by configuration alone, with no new code.
+        """
+        return self.dig("mcp_servers") or {}
+
     # ---------- low-level helpers -------------------------------------------
 
     def dig(self, *keys: str) -> Any:

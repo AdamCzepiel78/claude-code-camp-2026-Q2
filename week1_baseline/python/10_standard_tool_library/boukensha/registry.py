@@ -17,6 +17,15 @@ class Registry:
     def __init__(self, context: Context) -> None:
         self._context = context
 
+    @property
+    def context(self) -> Context:
+        """The shared :class:`Context`.
+
+        Exposed so tool modules can reach it — :mod:`boukensha.tools.mcp` uses
+        it to append an MCP server's instructions to the system prompt.
+        """
+        return self._context
+
     def tool(
         self, name: str, *, description: str, parameters: dict[str, Any] | None = None
     ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:

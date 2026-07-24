@@ -2,6 +2,10 @@ require_relative "errors"
 
 module Boukensha
   class Registry
+    # Exposed so tool modules can reach the shared Context — Tools::Mcp uses it
+    # to append an MCP server's instructions to the system prompt.
+    attr_reader :context
+
     def initialize(context)
       @context = context
     end

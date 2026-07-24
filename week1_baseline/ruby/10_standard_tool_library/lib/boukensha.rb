@@ -59,6 +59,12 @@ module Boukensha
   #                   options (command:, autoconnect:, only:, except:, debug:).
   #                   Pass false to use the in-process Tools::Mud instead, which
   #                   needs no subprocess but restates every tool by hand.
+  #
+  # mcp_servers:      Additional MCP servers to connect, on top of the MUD.
+  #                   nil (default) reads settings.yaml's `mcp_servers:` block;
+  #                   a Hash of name => spec overrides it; false connects none.
+  #                   This is the config-driven path — plug in any third-party
+  #                   MCP server by editing YAML, no new code.
   def self.run(
     task:,
     system:           nil,
@@ -73,6 +79,7 @@ module Boukensha
     shell_timeout:    30,
     mud:              nil,
     mud_mcp:          true,
+    mcp_servers:      nil,
     &block
   )
     cfg           = config                           # loads .env; populates ENV
@@ -98,7 +105,8 @@ module Boukensha
                             timeout: shell_timeout, allowed_commands: allowed_commands)
     end
 
-    resolved_mud = register_mud_tools(registry, cfg, mud: mud, mud_mcp: mud_mcp)
+    resolved_mud, mud_provenance = register_mud_tools(registry, cfg, mud: mud, mud_mcp: mud_mcp)
+    mcp_provenance = register_declared_servers(registry, cfg, mcp_servers)
 
     RunDSL.new(registry).instance_eval(&block) if block
 
@@ -121,8 +129,10 @@ module Boukensha
       max_iterations:    effective_max_iterations,
       max_output_tokens: effective_max_output_tokens,
       model:             model,
-      provider:          backend
-    })
+      provider:          backend,
+      mud_tools:         mud_provenance,
+      mcp_servers:       mcp_provenance
+    }.compact)
     agent   = Agent.new(context: ctx, registry: registry, builder: builder, client: client, logger: logger,
                         task_settings: task_settings, max_iterations: effective_max_iterations, max_output_tokens: effective_max_output_tokens)
 
@@ -146,6 +156,7 @@ module Boukensha
     shell_timeout:    30,
     mud:              nil,
     mud_mcp:          true,
+    mcp_servers:      nil,
     &block
   )
     cfg           = config                           # loads .env; populates ENV
@@ -171,7 +182,8 @@ module Boukensha
                             timeout: shell_timeout, allowed_commands: allowed_commands)
     end
 
-    resolved_mud = register_mud_tools(registry, cfg, mud: mud, mud_mcp: mud_mcp)
+    resolved_mud, mud_provenance = register_mud_tools(registry, cfg, mud: mud, mud_mcp: mud_mcp)
+    mcp_provenance = register_declared_servers(registry, cfg, mcp_servers)
 
     RunDSL.new(registry).instance_eval(&block) if block
 
@@ -194,8 +206,10 @@ module Boukensha
       max_iterations:    effective_max_iterations,
       max_output_tokens: effective_max_output_tokens,
       model:             model,
-      provider:          backend
-    })
+      provider:          backend,
+      mud_tools:         mud_provenance,
+      mcp_servers:       mcp_provenance
+    }.compact)
 
     Repl.new(
       context:    ctx,
@@ -225,25 +239,55 @@ module Boukensha
   # they are mutually exclusive — mud_mcp wins when both are requested.
   # Returns the resolved connection settings, which the REPL banner uses to
   # show MUD reachability.
+  # Returns [connection, provenance] — the latter recorded in the session log so
+  # it is afterwards visible *which* implementation served the MUD tools. The
+  # tool names differ between the two paths, but relying on that to tell them
+  # apart is guesswork; this states it.
   def self.register_mud_tools(registry, cfg, mud:, mud_mcp:)
-    return nil if mud == false                       # explicit opt-out wins
+    return [nil, nil] if mud == false                # explicit opt-out wins
 
     # A Hash in mud: is a connection override; otherwise fall back to config.
     # No connection settings anywhere means no MUD tools at all — which also
     # keeps us from spawning an MCP server for an agent that will never play.
     connection = (mud.is_a?(Hash) ? mud : nil) || mud_opts_from_config(cfg)
-    return nil if connection.nil?
+    return [nil, nil] if connection.nil?
 
     if mud_mcp
       overrides = mud_mcp.is_a?(Hash) ? mud_mcp : {}
-      Tools::MudMcp.register(registry, **connection.merge(overrides))
+      client    = Tools::MudMcp.register(registry, **connection.merge(overrides))
+      [connection, {
+        source:         "mcp",
+        server:         client.server_info["name"],
+        server_version: client.server_info["version"]
+      }.compact]
     else
       Tools::Mud.register(registry, **connection)
+      [connection, { source: "in_process" }]
     end
-
-    connection
   end
   private_class_method :register_mud_tools
+
+  # Connect any MCP servers declared in settings.yaml's `mcp_servers:` block (or
+  # passed explicitly as a Hash), on top of the MUD. This is the config-driven
+  # path: a user plugs in a Kubernetes or filesystem server by editing YAML, with
+  # no new code. Tool-name collisions across servers are namespaced by
+  # MCP::Servers; the MUD's tools take part in that too.
+  #
+  #   mcp_servers: nil    -> use settings.yaml's mcp_servers block (the default)
+  #   mcp_servers: {...}  -> use this Hash instead
+  #   mcp_servers: false  -> connect none, even if declared in settings.yaml
+  #
+  # Returns the per-server provenance (recorded in the session log) or nil.
+  def self.register_declared_servers(registry, cfg, mcp_servers)
+    return nil if mcp_servers == false
+
+    specs = mcp_servers.is_a?(Hash) ? mcp_servers : cfg.mcp_servers
+    return nil if specs.nil? || specs.empty?
+
+    _clients, provenance = Tools::Mcp.connect(registry, specs)
+    provenance
+  end
+  private_class_method :register_declared_servers
 
   # Build a mud options hash from config (used when mud: nil is passed to run/repl).
   # Returns nil if no MUD host is configured.
@@ -281,5 +325,6 @@ require_relative "boukensha/repl"
 require_relative "boukensha/tools/file_system"
 require_relative "boukensha/tools/shell"
 require_relative "boukensha/tools/mud"
-require_relative "boukensha/mcp_client"
+require_relative "boukensha/mcp"
+require_relative "boukensha/tools/mcp"
 require_relative "boukensha/tools/mud_mcp"

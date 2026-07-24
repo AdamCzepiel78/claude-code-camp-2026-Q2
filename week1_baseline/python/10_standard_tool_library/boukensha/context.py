@@ -25,6 +25,21 @@ class Context:
             Path(working_dir).expanduser().resolve() if working_dir else None
         )
 
+    def append_system(self, text: str | None) -> None:
+        """Append text to the system prompt after construction.
+
+        Used by :mod:`boukensha.tools.mcp` to fold an MCP server's
+        ``instructions`` into the prompt. The server declares how it wants to be
+        driven — which tool to call first, what state it holds — and the agent
+        reads that, instead of the client hard-coding knowledge of a particular
+        server's tools.
+        """
+        if not text or not text.strip():
+            return
+
+        parts = [p for p in (self.system, text) if p and p.strip()]
+        self.system = "\n\n".join(parts)
+
     def register_tool(self, tool: Tool) -> None:
         self.tools[tool.name] = tool
 
