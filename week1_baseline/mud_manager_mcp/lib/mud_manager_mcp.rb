@@ -1,7 +1,9 @@
 # MudManagerMcp — an MCP server for CircleMUD/tbaMUD.
 #
-# The JSON-RPC transport and the MCP lifecycle come from the `mcp_server` gem;
-# what lives here is everything that makes this server a *MUD* server:
+# The JSON-RPC transport and the MCP lifecycle come from McpServer, vendored
+# under lib/vendor (see lib/vendor/README.md) so this ships as one gem with no
+# runtime dependency. What lives here is everything that makes this a *MUD*
+# server:
 #
 #   Session          long-lived telnet connection, background buffering, IAC stripping
 #   Primitives       stateless, typed CircleMUD command builders
@@ -27,6 +29,8 @@ module MudManagerMcp
     channel chatter). Use read_until_quiet or drain to collect it.
   TEXT
 end
+
+require_relative "vendor/mcp_server"  # the JSON-RPC transport (McpServer::Server)
 
 require_relative "mud_manager_mcp/primitives"
 require_relative "mud_manager_mcp/session"

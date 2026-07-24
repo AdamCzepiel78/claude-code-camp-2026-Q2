@@ -19,9 +19,7 @@
 require "optparse"
 
 $LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
-$LOAD_PATH.unshift(File.expand_path("../../mcp_server/lib", __dir__))  # sibling gem, runs from a checkout
-require "mcp_server"
-require "mud_manager_mcp"
+require "mud_manager_mcp"  # brings in the vendored McpServer transport too
 
 options = {
   host:        ENV["MUD_HOST"] || MudManagerMcp::Session::DEFAULT_HOST,

@@ -14,15 +14,17 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 3.0"
 
-  # The JSON-RPC transport and MCP lifecycle live in a domain-free gem; this
-  # gem supplies only the MUD half (session, primitives, tools).
-  spec.add_dependency "mcp_server", "~> 0.1"
-
+  # No runtime dependencies. The JSON-RPC transport and MCP lifecycle
+  # (McpServer) are vendored under lib/vendor — byte-identical copies of the
+  # standalone mcp_server gem, which stays the canonical source (see
+  # lib/vendor/README.md). This keeps mud_manager_mcp a single self-contained
+  # gem: `gem install mud_manager_mcp` pulls nothing else and bin/mud_manager_mcp
+  # runs from this gem alone.
+  #
+  # The vendored files are picked up by the lib/**/*.rb glob below; socket,
+  # thread and optparse are stdlib, and McpServer writes JSON-RPC 2.0 by hand
+  # rather than pulling in an SDK, so the install footprint stays zero.
   spec.files       = Dir["lib/**/*.rb"] + Dir["bin/*"]
   spec.bindir      = "bin"
   spec.executables = ["mud_manager_mcp"]
-
-  # No third-party dependencies beyond that — socket, thread and optparse are
-  # stdlib, and mcp_server writes JSON-RPC 2.0 by hand rather than pulling in
-  # an SDK, keeping the wire protocol readable and the install footprint zero.
 end

@@ -124,7 +124,16 @@ implementation.
 
 ## Who uses this
 
-[`mud_manager_mcp`](../mud_manager_mcp) is the only consumer in this repo
-today, but nothing here refers to it — `spec.add_dependency "mcp_server"` in
-its gemspec is the only link. Any Ruby program can `require "mcp_server"` and
-expose its own tools over MCP the same way.
+This is the **canonical source** for the transport. Two things build on it:
+
+- [`mud_manager_mcp`](../mud_manager_mcp) **vendors** these files (byte-identical
+  copies under its `lib/vendor/`) so it can ship as a single self-contained gem
+  with no runtime dependency. Its `tasks/verify_vendor.rb` diffs the copies
+  against this directory and fails on drift — so this stays the one place the
+  transport is edited.
+- [`python/mcp_server`](../python/mcp_server) is the Python port of the same
+  framework.
+
+Nothing here refers to either consumer — the code is domain-free. Any Ruby
+program can `require "mcp_server"` (or vendor it the same way) and expose its
+own tools over MCP.

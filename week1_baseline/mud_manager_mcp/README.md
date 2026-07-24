@@ -12,12 +12,22 @@ Responsibilities:
   character without reimplementing the telnet layer (see
   [MCP server](#mcp-server))
 
-## Built on `mcp_server`
+## A single self-contained gem
+
+`gem install mud_manager_mcp` pulls **no other gems**, and `bin/mud_manager_mcp`
+runs from this one gem alone.
 
 The JSON-RPC transport and MCP lifecycle (handshake, `tools/list`,
-`tools/call`, error codes) are **not implemented here**. They live in the
-domain-free [`mcp_server`](../mcp_server) gem, a dependency of this one. This
-package supplies only the MUD half: `Session`, `Primitives`,
+`tools/call`, error codes) are **not written here**. They come from the
+domain-free `McpServer` framework, **vendored** under
+[`lib/vendor/`](lib/vendor/README.md) — byte-identical copies of the standalone
+[`mcp_server`](../mcp_server) gem, which stays the canonical source and the
+"write your own MCP server" teaching artifact. Vendoring (rather than depending
+on the gem) is what keeps this a single binary to ship; a dev-time check,
+`ruby tasks/verify_vendor.rb`, fails if the copies ever drift from the
+canonical source.
+
+This package itself supplies only the MUD half: `Session`, `Primitives`,
 `SessionRegistry`, `Tools` (31 tool descriptors + dispatch), and the
 instructions string — everything that makes this server *the MUD one*.
 

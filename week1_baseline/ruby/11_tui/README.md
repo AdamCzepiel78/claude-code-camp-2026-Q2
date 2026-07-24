@@ -79,10 +79,10 @@ rather than `examples/example.rb` (that file is the step 10 MUD demo, carried
 over unchanged — it doesn't exercise the TUI).
 
 ```sh
-# This step depends on mud_manager_mcp, which depends on mcp_server — build
-# and install both first (skip if already installed from another step):
-cd ../../mcp_server  && gem build mcp_server.gemspec       && gem install ./mcp_server-0.1.0.gem
-cd ../mud_manager_mcp && gem build mud_manager_mcp.gemspec && gem install ./mud_manager_mcp-0.1.0.gem
+# This step depends on mud_manager_mcp, a single self-contained gem (the MCP
+# transport is vendored inside it — no mcp_server gem). Build and install it
+# first (skip if already installed from another step):
+cd ../../mud_manager_mcp && gem build mud_manager_mcp.gemspec && gem install ./mud_manager_mcp-0.1.0.gem
 cd ../ruby/11_tui
 
 # Build and install this step's gem. If a later step's gem is already

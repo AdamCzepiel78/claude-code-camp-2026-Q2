@@ -151,14 +151,13 @@ BOUKENSHA_PATH=~/Sites/boukensha/10_standard_tool_library boukensha
 
 ### Building the gem
 
-`boukensha` depends on [`mud_manager_mcp`](../../mud_manager_mcp), which in
-turn depends on [`mcp_server`](../../mcp_server). Build and install all three,
-in that order, before installing this step's gem:
+`boukensha` depends on [`mud_manager_mcp`](../../mud_manager_mcp), which is a
+single self-contained gem (the MCP transport is vendored inside it — no
+`mcp_server` gem to install). Build and install the two, in order:
 
 ```sh
-cd ../../mcp_server        && gem build mcp_server.gemspec        && gem install ./mcp_server-0.1.0.gem
-cd ../mud_manager_mcp       && gem build mud_manager_mcp.gemspec  && gem install ./mud_manager_mcp-0.1.0.gem
-cd ../ruby/10_standard_tool_library && gem build boukensha.gemspec && gem install ./boukensha-0.10.0.gem
+cd ../../mud_manager_mcp             && gem build mud_manager_mcp.gemspec && gem install ./mud_manager_mcp-0.1.0.gem
+cd ../ruby/10_standard_tool_library && gem build boukensha.gemspec       && gem install ./boukensha-0.10.0.gem
 ```
 
 `Tools::MudMcp` prefers running `mud_manager_mcp`'s executable straight from a
