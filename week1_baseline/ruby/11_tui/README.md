@@ -2,6 +2,13 @@
 
 Boukensha now ships a full terminal UI (TUI) built on the [`charm`](https://github.com/charm-ruby/charm) gem (bubbletea + lipgloss + bubbles). The plain REPL from step 10 is still there and can be selected with `tui: false`.
 
+This step carries forward everything from step 10 unchanged: the standard
+tool library (`FileSystem`, `Shell`), the generic `Boukensha::MCP` client, MUD
+tools sourced from [`mud_manager_mcp`](../../mud_manager_mcp) by default
+(`mud_mcp: true`), and config-driven `mcp_servers:`. See
+[step 10's README](../10_standard_tool_library/README.md#boukenshamcp--a-generic-model-context-protocol-client)
+for the MCP details — this document covers only what's new for the TUI.
+
 ## What's new
 
 ### `Boukensha::Tui`
@@ -72,6 +79,12 @@ rather than `examples/example.rb` (that file is the step 10 MUD demo, carried
 over unchanged — it doesn't exercise the TUI).
 
 ```sh
+# This step depends on mud_manager_mcp, which depends on mcp_server — build
+# and install both first (skip if already installed from another step):
+cd ../../mcp_server  && gem build mcp_server.gemspec       && gem install ./mcp_server-0.1.0.gem
+cd ../mud_manager_mcp && gem build mud_manager_mcp.gemspec && gem install ./mud_manager_mcp-0.1.0.gem
+cd ../ruby/11_tui
+
 # Build and install this step's gem. If a later step's gem is already
 # installed, `boukensha` will keep launching that version's loader instead —
 # remove it first:
@@ -87,6 +100,6 @@ BOUKENSHA_DIR=/home/andrew/Sites/Claude-Code-Camp/.boukensha BOUKENSHA_PATH=~/Si
 BOUKENSHA_PATH=~/Sites/boukensha/11_tui boukensha --no-tui
 ```
 
-``sh
+```sh
 bundle exec bin/boukensha
 ```

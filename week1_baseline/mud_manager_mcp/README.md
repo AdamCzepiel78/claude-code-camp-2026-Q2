@@ -12,6 +12,33 @@ Responsibilities:
   character without reimplementing the telnet layer (see
   [MCP server](#mcp-server))
 
+## Built on `mcp_server`
+
+The JSON-RPC transport and MCP lifecycle (handshake, `tools/list`,
+`tools/call`, error codes) are **not implemented here**. They live in the
+domain-free [`mcp_server`](../mcp_server) gem, a dependency of this one. This
+package supplies only the MUD half: `Session`, `Primitives`,
+`SessionRegistry`, `Tools` (31 tool descriptors + dispatch), and the
+instructions string — everything that makes this server *the MUD one*.
+
+`bin/mud_manager_mcp` wires the two together:
+
+```ruby
+McpServer::Server.new(
+  tools:        MudManagerMcp::ToolProvider.new(registry),
+  name:         "mud-manager",
+  version:      MudManagerMcp::VERSION,
+  instructions: MudManagerMcp::INSTRUCTIONS,
+  on_shutdown:  -> { registry.close_all }
+).run
+```
+
+`ToolProvider` is a thin adapter binding the stateful `SessionRegistry` to the
+stateless transport's `#descriptors`/`#call` contract. If you want to write an
+*unrelated* MCP server — no MUD involved — start from `mcp_server`'s own
+README instead; the 91% of this file that used to be JSON-RPC boilerplate now
+lives there, tested independently of anything MUD-shaped.
+
 ## Build the Gem
 
 From this directory:

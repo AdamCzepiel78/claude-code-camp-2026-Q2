@@ -19,6 +19,10 @@ command = MudManagerMcp::Primitives.look
 puts command
 session.send_command(command)
 
+command = MudManagerMcp::Primitives.say("Hello from the MCP client!")
+puts command
+session.send_command(command)
+
 output = session.read_until_quiet
 puts output
 

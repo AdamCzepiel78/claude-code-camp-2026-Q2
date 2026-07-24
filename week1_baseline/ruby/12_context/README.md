@@ -2,6 +2,13 @@
 
 When you call an LLM directly you are responsible for the context window. There is no auto-compacting. This step adds proper token tracking, visual warnings, and automatic compaction so the agent never silently blows past the limit.
 
+This step carries forward everything from step 10 unchanged: the standard
+tool library (`FileSystem`, `Shell`), the generic `Boukensha::MCP` client, MUD
+tools sourced from [`mud_manager_mcp`](../../mud_manager_mcp) by default
+(`mud_mcp: true`), and config-driven `mcp_servers:`. See
+[step 10's README](../10_standard_tool_library/README.md#boukenshamcp--a-generic-model-context-protocol-client)
+for the MCP details — this document covers only what's new for context management.
+
 ## What's new
 
 ### Accurate context tracking
@@ -73,13 +80,20 @@ Boukensha.repl(context_window: 128_000)  # for a smaller model
 
 ## Run the demo
 
+```sh
+# This step depends on mud_manager_mcp, which depends on mcp_server — build
+# and install both first (skip if already installed from another step):
+cd ../../mcp_server  && gem build mcp_server.gemspec       && gem install ./mcp_server-0.1.0.gem
+cd ../mud_manager_mcp && gem build mud_manager_mcp.gemspec && gem install ./mud_manager_mcp-0.1.0.gem
+cd ../ruby/12_context
+
 gem uninstall boukensha
 
 gem build boukensha.gemspec
 gem install boukensha-0.12.0.gem
 
-```sh
 ruby examples/example.rb
 
 # via the global executable:
 BOUKENSHA_DIR=~/Sites/Claude-Code-Camp/.boukensha BOUKENSHA_PATH=~/Sites/Claude-Code-Camp/week1_baseline/12_context boukensha
+```
