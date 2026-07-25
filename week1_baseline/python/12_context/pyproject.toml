@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boukensha"
+version = "0.12.0"
+description = "BOUKENSHA — context management (Python port, Step 12): context-window tracking, colour-coded usage display, auto-compaction, and the /compact command, plus reasoning-block plumbing across every backend and an OpenAI Responses API migration. The Tasks::Base/Tasks::Player indirection is gone — Config drives provider/model/system-prompt/limits directly. Set BOUKENSHA_PATH to load a specific lesson step, or run with defaults to use the bundled release."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv>=1.0",
+    "PyYAML>=6.0",
+    "textual>=8.0",
+]
+
+# The pip analog of the gemspec's executable: `pip install .` puts `boukensha`
+# on $PATH, dispatching to the standalone loader.
+[project.scripts]
+boukensha = "boukensha_loader:main"
+
+[tool.setuptools]
+# Ship the standalone loader (top-level module, outside the package) alongside
+# the boukensha package so the console script can find it after install.
+py-modules = ["boukensha_loader"]
+
+[tool.setuptools.packages.find]
+include = ["boukensha*"]
+
+[tool.setuptools.package-data]
+boukensha = ["py.typed"]

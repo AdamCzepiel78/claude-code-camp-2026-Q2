@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BASE="$(cd "$(dirname "$0")/.." && pwd)"   # week1_baseline
+
+cd "$BASE/ruby/12_context"
+
+# This step's gemspec depends on `mud_manager_mcp (~> 0.1)`, which is not
+# published on rubygems.org — it's vendored at week1_baseline/mud_manager_mcp
+# and built there as mud_manager_mcp-0.1.0.gem. Install it locally (idempotent)
+# so `bundle install` can resolve the dependency without network access. That
+# gem vendors its own MCP transport (see docs/plans/mud_manager/single_binary.md),
+# so no separate `mcp_server` gem install step is needed.
+if ! gem list -i mud_manager_mcp -v 0.1.0 >/dev/null 2>&1; then
+  gem install --local "$BASE/mud_manager_mcp/mud_manager_mcp-0.1.0.gem"
+fi
+
+# `bundle install` also resolves `charm` (and its native bubbletea/lipgloss/
+# bubbles/bubblezone/ntcharts/gum/glamour/harmonica dependency tree) from
+# rubygems.org — no local vendoring needed there, unlike mud_manager_mcp.
+bundle install --quiet
+exec bundle exec ruby bin/boukensha "$@"
